@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -37,12 +37,7 @@ function OnboardingPage() {
         <div className="absolute w-[300px] h-[300px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(139, 92, 246, 0.25) 0%, transparent 70%)', top: '-60px', right: '-80px' }} />
         <div className="absolute w-[250px] h-[250px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(167, 139, 250, 0.15) 0%, transparent 70%)', bottom: '200px', left: '-60px' }} />
 
-        {/* Top indicators */}
-        <div className="flex justify-center items-center gap-2 pt-[60px] pb-5 relative z-10">
-          <div className="h-1 rounded-sm w-10 bg-[#7dd3fc]" />
-          <div className="h-1 rounded-sm w-5 bg-[#7dd3fc]/30" />
-          <div className="h-1 rounded-sm w-5 bg-[#7dd3fc]/30" />
-        </div>
+        <div className="pt-[60px]" />
 
         {/* Content */}
         <div className="flex-1 flex flex-col items-center justify-center px-7 relative z-10">
@@ -60,15 +55,55 @@ function OnboardingPage() {
             <div className="absolute w-3 h-3 rounded-full bg-yellow-300/80 top-20 left-5" style={{ animation: 'mbFloat 2.5s ease-in-out infinite 0.5s' }} />
             <div className="absolute w-2 h-2 rounded-full bg-violet-400/80 bottom-[60px] right-10" style={{ animation: 'mbFloat 2s ease-in-out infinite 1s' }} />
 
+            {/* Glow halo */}
             <div
-              className="w-[200px] h-[200px] rounded-full relative"
+              className="absolute w-[240px] h-[240px] rounded-full pointer-events-none"
+              style={{ background: 'radial-gradient(circle, rgba(168,85,247,0.45) 0%, rgba(168,85,247,0.15) 40%, transparent 70%)', filter: 'blur(8px)' }}
+            />
+
+            {/* Realistic globe */}
+            <div
+              className="w-[200px] h-[200px] rounded-full relative overflow-hidden"
               style={{
-                background: 'linear-gradient(135deg, #7c3aed 0%, #a855f7 30%, #c084fc 60%, #e879f9 100%)',
-                boxShadow: '0 0 60px rgba(168, 85, 247, 0.4), inset -20px -20px 40px rgba(0, 0, 0, 0.2), inset 20px 20px 40px rgba(255, 255, 255, 0.15)',
+                background:
+                  'radial-gradient(circle at 30% 28%, #f0abfc 0%, #d8b4fe 12%, #a855f7 35%, #7c3aed 60%, #4c1d95 88%, #2e1065 100%)',
+                boxShadow:
+                  '0 0 80px rgba(168, 85, 247, 0.55), inset -22px -28px 60px rgba(0, 0, 0, 0.55), inset 18px 22px 50px rgba(255, 255, 255, 0.18)',
               }}
             >
-              <div className="absolute w-[60px] h-5 rounded-full bg-white/15 top-[30px] left-10 -rotate-[20deg]" />
-              <div className="absolute w-10 h-3 rounded-full bg-white/10 bottom-[50px] right-[45px] rotate-[15deg]" />
+              {/* Continents */}
+              <svg viewBox="0 0 200 200" className="absolute inset-0 w-full h-full" aria-hidden="true">
+                <defs>
+                  <radialGradient id="continent" cx="35%" cy="30%" r="80%">
+                    <stop offset="0%" stopColor="rgba(255,255,255,0.35)" />
+                    <stop offset="100%" stopColor="rgba(255,255,255,0.05)" />
+                  </radialGradient>
+                </defs>
+                <g fill="url(#continent)">
+                  <path d="M55,70 q10,-18 28,-14 q14,3 18,16 q4,12 -6,20 q-12,10 -26,4 q-18,-8 -14,-26 z" />
+                  <path d="M110,55 q14,-6 24,4 q10,12 4,24 q-6,10 -18,8 q-16,-3 -16,-18 q0,-12 6,-18 z" />
+                  <path d="M70,120 q14,-6 28,4 q12,10 6,24 q-8,14 -24,12 q-20,-2 -22,-18 q-2,-14 12,-22 z" />
+                  <path d="M130,118 q14,2 18,16 q4,16 -10,22 q-14,4 -22,-8 q-8,-14 2,-24 q4,-6 12,-6 z" />
+                </g>
+                {/* Latitude/longitude lines */}
+                <g stroke="rgba(255,255,255,0.12)" strokeWidth="0.6" fill="none">
+                  <ellipse cx="100" cy="100" rx="95" ry="40" />
+                  <ellipse cx="100" cy="100" rx="95" ry="70" />
+                  <ellipse cx="100" cy="100" rx="40" ry="95" />
+                  <ellipse cx="100" cy="100" rx="70" ry="95" />
+                </g>
+              </svg>
+
+              {/* Atmosphere highlight */}
+              <div
+                className="absolute inset-0 rounded-full pointer-events-none"
+                style={{ background: 'radial-gradient(circle at 28% 22%, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0) 35%)' }}
+              />
+              {/* Inner shadow rim */}
+              <div
+                className="absolute inset-0 rounded-full pointer-events-none"
+                style={{ boxShadow: 'inset -8px -10px 30px rgba(0,0,0,0.6), inset 0 0 60px rgba(76,29,149,0.6)' }}
+              />
             </div>
 
             {/* Floating card */}
