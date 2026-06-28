@@ -85,11 +85,12 @@ function SignupPage() {
         </div>
 
         {/* Continue button */}
-        <button
-          className="mt-8 w-full py-4 rounded-[30px] bg-white text-black text-[16px] font-bold shadow-[0_10px_30px_rgba(255,255,255,0.12)] transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0"
+        <Link
+          to="/personalize"
+          className="mt-8 w-full py-4 rounded-[30px] bg-white text-black text-[16px] font-bold text-center shadow-[0_10px_30px_rgba(255,255,255,0.12)] transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0"
         >
           Continue
-        </button>
+        </Link>
 
         {/* OR divider */}
         <div className="flex items-center gap-4 my-7">
