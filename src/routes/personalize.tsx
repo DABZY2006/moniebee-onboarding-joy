@@ -69,11 +69,15 @@ function PersonalizePage() {
               <input
                 type="text"
                 placeholder={ph}
+                onChange={(e) => {
+                  if (ph === "Create user name") username = e.target.value;
+                }}
                 className="w-full bg-transparent outline-none px-5 py-4 text-[15px] text-white placeholder:text-white/40"
               />
             </div>
           ))}
         </div>
+
 
         <div className="flex-1 min-h-[80px]" />
 
