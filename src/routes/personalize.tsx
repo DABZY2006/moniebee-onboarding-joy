@@ -13,6 +13,8 @@ export const Route = createFileRoute("/personalize")({
 
 function PersonalizePage() {
   const navigate = useNavigate();
+  let username = "";
+
   return (
     <div className="flex min-h-screen justify-center items-start bg-black">
       <link rel="preconnect" href="https://fonts.googleapis.com" />
