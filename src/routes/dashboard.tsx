@@ -113,8 +113,9 @@ function Dashboard() {
               <p className="text-white/70 text-[11px] uppercase tracking-widest">
                 Total Portfolio Value
               </p>
-              <p className="text-[26px] font-bold mt-1 leading-none">₦2,560,450.00</p>
-              <p className="text-white/60 text-[12px] mt-1">≈ $1,637.28</p>
+              <p className="text-[26px] font-bold mt-1 leading-none">₦{ngn}</p>
+              <p className="text-white/60 text-[12px] mt-1">≈ ${usd}</p>
+
               <p className="text-emerald-300 text-[12px] mt-3 font-medium">
                 +₦156,450.00 (6.48%) Today
               </p>
