@@ -26,7 +26,36 @@ export const Route = createFileRoute("/dashboard")({
 });
 
 function Dashboard() {
+  const TARGET = 160000;
+  const RATE = 1560; // NGN per USD
+  const [name, setName] = useState("there");
+  const [bal, setBal] = useState(100);
+
+  useEffect(() => {
+    try {
+      const n = localStorage.getItem("moniebee_username");
+      if (n) setName(n);
+    } catch {}
+    const duration = 2000;
+    const start = performance.now();
+    const from = 100;
+    let raf = 0;
+    const tick = (t: number) => {
+      const p = Math.min(1, (t - start) / duration);
+      const eased = 1 - Math.pow(1 - p, 3);
+      setBal(from + (TARGET - from) * eased);
+      if (p < 1) raf = requestAnimationFrame(tick);
+      else setBal(TARGET);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  const ngn = bal.toLocaleString("en-NG", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const usd = (bal / RATE).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
   return (
+
     <div className="flex min-h-screen justify-center items-start bg-black">
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
