@@ -11,7 +11,7 @@ export const Route = createFileRoute("/loading")({
 function LoadingPage() {
   const navigate = useNavigate();
   useEffect(() => {
-    const t = setTimeout(() => navigate({ to: "/dashboard" }), 3000);
+    const t = setTimeout(() => navigate({ to: "/dashboard" }), 5000);
     return () => clearTimeout(t);
   }, [navigate]);
 
