@@ -54,7 +54,7 @@ function PersonalizePage() {
         </div>
 
         <div className="mt-10 space-y-4">
-          {["Create user name", "Do you have Referral code?"].map((ph) => (
+          {["Create user name", "Phone number", "Do you have Referral code?"].map((ph) => (
             <div
               key={ph}
               className="rounded-2xl border border-white/10"
