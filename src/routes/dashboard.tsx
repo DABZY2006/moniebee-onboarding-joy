@@ -86,8 +86,9 @@ function Dashboard() {
         {/* Top bar */}
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-[18px] font-semibold leading-tight">Hello, Alex</p>
+            <p className="text-[18px] font-semibold leading-tight">Hello, {name}</p>
             <p className="text-[12px] text-white/50">Welcome back</p>
+
           </div>
           <div className="flex items-center gap-2">
             <button className="w-10 h-10 rounded-full glass flex items-center justify-center">
