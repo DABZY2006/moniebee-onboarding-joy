@@ -82,7 +82,11 @@ function PersonalizePage() {
         <div className="flex-1 min-h-[80px]" />
 
         <button
-          onClick={() => navigate({ to: "/loading" })}
+          onClick={() => {
+            try { localStorage.setItem("moniebee_username", username.trim() || "Alex"); } catch {}
+            navigate({ to: "/loading" });
+          }}
+
           className="w-full py-4 rounded-[30px] bg-white text-black text-[16px] font-bold shadow-[0_10px_30px_rgba(255,255,255,0.12)] transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0"
         >
           Continue
