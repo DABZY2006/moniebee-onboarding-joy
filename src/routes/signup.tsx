@@ -1,5 +1,7 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
+import { useState } from "react";
+import { signInWithGoogle } from "@/lib/firebase";
 
 export const Route = createFileRoute("/signup")({
   head: () => ({
@@ -14,6 +16,26 @@ export const Route = createFileRoute("/signup")({
 });
 
 function SignupPage() {
+  const navigate = useNavigate();
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleGoogle = async () => {
+    setError(null);
+    setBusy(true);
+    try {
+      const user = await signInWithGoogle();
+      if (user.displayName) {
+        try { localStorage.setItem("moniebee_username", user.displayName); } catch {}
+      }
+      navigate({ to: "/loading" });
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "Sign-in failed";
+      setError(msg);
+      setBusy(false);
+    }
+  };
+
   return (
     <div className="flex min-h-screen justify-center items-start bg-black">
       <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -101,15 +123,22 @@ function SignupPage() {
 
         {/* Google button */}
         <button
-          className="w-full py-4 rounded-[30px] bg-white text-black text-[16px] font-semibold flex items-center justify-center gap-3 shadow-[0_10px_30px_rgba(0,0,0,0.25)] transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0"
+          type="button"
+          onClick={handleGoogle}
+          disabled={busy}
+          className="w-full py-4 rounded-[30px] bg-white text-black text-[16px] font-semibold flex items-center justify-center gap-3 shadow-[0_10px_30px_rgba(0,0,0,0.25)] transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-60 disabled:cursor-not-allowed"
         >
           <GoogleIcon />
-          Sign Up with Google
+          {busy ? "Signing in..." : "Sign Up with Google"}
         </button>
+        {error && (
+          <p className="mt-3 text-[12px] text-red-300 text-center">{error}</p>
+        )}
       </div>
     </div>
   );
 }
+
 
 function GoogleIcon() {
   return (
