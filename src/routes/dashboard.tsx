@@ -46,8 +46,9 @@ function Dashboard() {
   }, [user]);
 
   useEffect(() => {
-
+    const duration = 2000;
     const start = performance.now();
+
     const from = 100;
     let raf = 0;
     const tick = (t: number) => {
