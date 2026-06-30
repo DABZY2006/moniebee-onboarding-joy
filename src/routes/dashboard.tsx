@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useAuth } from "@/hooks/use-auth";
+
 
 import {
   Bell,
@@ -28,15 +30,23 @@ export const Route = createFileRoute("/dashboard")({
 function Dashboard() {
   const TARGET = 160000;
   const RATE = 1560; // NGN per USD
+  const { user } = useAuth();
   const [name, setName] = useState("there");
   const [bal, setBal] = useState(100);
 
   useEffect(() => {
+    if (user?.displayName) {
+      setName(user.displayName.split(" ")[0]);
+      return;
+    }
     try {
       const n = localStorage.getItem("moniebee_username");
       if (n) setName(n);
     } catch {}
-    const duration = 2000;
+  }, [user]);
+
+  useEffect(() => {
+
     const start = performance.now();
     const from = 100;
     let raf = 0;
