@@ -26,12 +26,13 @@ import { getFirestore, doc, setDoc, serverTimestamp } from "firebase/firestore";
 // the domain you are serving the app from, otherwise the popup is blocked.
 
 const firebaseConfig: FirebaseOptions = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY ?? "",
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN ?? "",
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID ?? "",
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET ?? "",
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID ?? "",
-  appId: import.meta.env.VITE_FIREBASE_APP_ID ?? "",
+  apiKey: "AIzaSyDxI6iWPQMXSYHrVdxXZh8yXoQHasaPKio",
+  authDomain: "moneebee-d7290.firebaseapp.com",
+  projectId: "moneebee-d7290",
+  storageBucket: "moneebee-d7290.firebasestorage.app",
+  messagingSenderId: "794169568793",
+  appId: "1:794169568793:web:48febb0c3941de5635c488",
+  measurementId: "G-382NLRJH2N",
 };
 
 export const firebaseApp = getApps().length ? getApp() : initializeApp(firebaseConfig);
