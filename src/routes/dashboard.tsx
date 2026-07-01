@@ -34,6 +34,7 @@ function Dashboard() {
   const [name, setName] = useState("there");
   const [bal, setBal] = useState(100);
   const [showToast, setShowToast] = useState(false);
+  const [toastExit, setToastExit] = useState(false);
 
   useEffect(() => {
     if (user?.displayName) {
