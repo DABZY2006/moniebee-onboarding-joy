@@ -96,7 +96,43 @@ function Dashboard() {
         .neon { box-shadow: 0 0 24px rgba(168,85,247,0.45), 0 10px 40px rgba(88,28,135,0.35); }
         .chip-btn { transition: transform .15s ease, background .2s ease; }
         .chip-btn:hover { background: rgba(168,85,247,0.18); transform: translateY(-1px); }
+        @keyframes toastDown { from { transform: translate(-50%, -120%); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
+        @keyframes toastUp { from { transform: translate(-50%, 0); opacity: 1; } to { transform: translate(-50%, -120%); opacity: 0; } }
+        .toast-in { animation: toastDown .45s cubic-bezier(.2,.9,.3,1.2) forwards; }
+        .toast-out { animation: toastUp .4s ease-in forwards; }
       `}</style>
+
+      {/* Payment toast */}
+      {showToast !== null && (
+        <div
+          className={`fixed top-4 left-1/2 z-50 w-[92%] max-w-[400px] ${showToast ? "toast-in" : "toast-out"}`}
+          style={{ pointerEvents: "none" }}
+        >
+          <div
+            className="rounded-2xl p-3.5 flex items-center gap-3"
+            style={{
+              background: "linear-gradient(135deg, #8B5CF6 0%, #7C3AED 55%, #4C1D95 100%)",
+              backdropFilter: "blur(14px)",
+              border: "1px solid rgba(255,255,255,0.15)",
+              boxShadow: "0 10px 40px rgba(139,92,246,0.55), 0 0 30px rgba(168,85,247,0.4), inset 0 1px 0 rgba(255,255,255,0.15)",
+            }}
+          >
+            <div
+              className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+              style={{ background: "rgba(255,255,255,0.15)", boxShadow: "0 0 14px rgba(52,211,153,0.5)" }}
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="11" fill="#10b981" />
+                <path d="M7 12.5l3.2 3.2L17 9" stroke="#fff" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-white text-[14px] font-semibold leading-tight">Payment Received</p>
+              <p className="text-white/85 text-[12px] mt-0.5 leading-snug">₦160,000 has been credited to your account.</p>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="dash">
         {/* Top bar */}
