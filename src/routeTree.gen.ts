@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as PersonalizeRouteImport } from './routes/personalize'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as LoadingRouteImport } from './routes/loading'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
@@ -23,6 +24,11 @@ const SignupRoute = SignupRouteImport.update({
 const PersonalizeRoute = PersonalizeRouteImport.update({
   id: '/personalize',
   path: '/personalize',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoadingRoute = LoadingRouteImport.update({
@@ -45,6 +51,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/loading': typeof LoadingRoute
+  '/login': typeof LoginRoute
   '/personalize': typeof PersonalizeRoute
   '/signup': typeof SignupRoute
 }
@@ -52,6 +59,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/loading': typeof LoadingRoute
+  '/login': typeof LoginRoute
   '/personalize': typeof PersonalizeRoute
   '/signup': typeof SignupRoute
 }
@@ -60,21 +68,36 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/loading': typeof LoadingRoute
+  '/login': typeof LoginRoute
   '/personalize': typeof PersonalizeRoute
   '/signup': typeof SignupRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/loading' | '/personalize' | '/signup'
+  fullPaths:
+    | '/'
+    | '/dashboard'
+    | '/loading'
+    | '/login'
+    | '/personalize'
+    | '/signup'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/loading' | '/personalize' | '/signup'
-  id: '__root__' | '/' | '/dashboard' | '/loading' | '/personalize' | '/signup'
+  to: '/' | '/dashboard' | '/loading' | '/login' | '/personalize' | '/signup'
+  id:
+    | '__root__'
+    | '/'
+    | '/dashboard'
+    | '/loading'
+    | '/login'
+    | '/personalize'
+    | '/signup'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
   LoadingRoute: typeof LoadingRoute
+  LoginRoute: typeof LoginRoute
   PersonalizeRoute: typeof PersonalizeRoute
   SignupRoute: typeof SignupRoute
 }
@@ -93,6 +116,13 @@ declare module '@tanstack/react-router' {
       path: '/personalize'
       fullPath: '/personalize'
       preLoaderRoute: typeof PersonalizeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/loading': {
@@ -123,6 +153,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
   LoadingRoute: LoadingRoute,
+  LoginRoute: LoginRoute,
   PersonalizeRoute: PersonalizeRoute,
   SignupRoute: SignupRoute,
 }
