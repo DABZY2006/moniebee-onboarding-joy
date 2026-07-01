@@ -20,6 +20,18 @@ function SignupPage() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (u) => {
+      if (u) {
+        if (u.displayName) {
+          try { localStorage.setItem("moniebee_username", u.displayName); } catch {}
+        }
+        navigate({ to: "/loading" });
+      }
+    });
+    return () => unsub();
+  }, [navigate]);
+
   const handleGoogle = async () => {
     setError(null);
     setBusy(true);
