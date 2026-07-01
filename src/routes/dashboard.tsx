@@ -105,9 +105,9 @@ function Dashboard() {
       `}</style>
 
       {/* Payment toast */}
-      {showToast !== null && (
+      {showToast && (
         <div
-          className={`fixed top-4 left-1/2 z-50 w-[92%] max-w-[400px] ${showToast ? "toast-in" : "toast-out"}`}
+          className={`fixed top-4 left-1/2 z-50 w-[92%] max-w-[400px] ${toastExit ? "toast-out" : "toast-in"}`}
           style={{ pointerEvents: "none" }}
         >
           <div
