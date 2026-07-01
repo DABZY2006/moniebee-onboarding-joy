@@ -61,7 +61,8 @@ function Dashboard() {
       else {
         setBal(TARGET);
         setShowToast(true);
-        setTimeout(() => setShowToast(false), 4000);
+        setTimeout(() => setToastExit(true), 3600);
+        setTimeout(() => { setShowToast(false); setToastExit(false); }, 4000);
       }
     };
     raf = requestAnimationFrame(tick);
