@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
-import { useState } from "react";
-import { signInWithGoogle } from "@/lib/firebase";
+import { useEffect, useState } from "react";
+import { signInWithGoogle, auth, onAuthStateChanged } from "@/lib/firebase";
 
 export const Route = createFileRoute("/signup")({
   head: () => ({
@@ -19,6 +19,18 @@ function SignupPage() {
   const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (u) => {
+      if (u) {
+        if (u.displayName) {
+          try { localStorage.setItem("moniebee_username", u.displayName); } catch {}
+        }
+        navigate({ to: "/loading" });
+      }
+    });
+    return () => unsub();
+  }, [navigate]);
 
   const handleGoogle = async () => {
     setError(null);
