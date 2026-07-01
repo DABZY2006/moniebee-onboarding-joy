@@ -33,6 +33,7 @@ function Dashboard() {
   const { user } = useAuth();
   const [name, setName] = useState("there");
   const [bal, setBal] = useState(100);
+  const [showToast, setShowToast] = useState(false);
 
   useEffect(() => {
     if (user?.displayName) {
@@ -56,7 +57,11 @@ function Dashboard() {
       const eased = 1 - Math.pow(1 - p, 3);
       setBal(from + (TARGET - from) * eased);
       if (p < 1) raf = requestAnimationFrame(tick);
-      else setBal(TARGET);
+      else {
+        setBal(TARGET);
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 4000);
+      }
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
