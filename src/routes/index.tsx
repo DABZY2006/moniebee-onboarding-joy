@@ -133,9 +133,9 @@ function OnboardingPage() {
           <Link to="/signup" className="w-full py-4 px-6 rounded-[30px] text-base font-semibold bg-white text-[#0f0f0f] text-center shadow-[0_4px_15px_rgba(0,0,0,0.15)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(0,0,0,0.2)] active:translate-y-0 active:shadow-[0_2px_10px_rgba(0,0,0,0.15)]">
             Get Started
           </Link>
-          <button className="w-full py-4 px-6 rounded-[30px] text-base font-semibold bg-[#c4b5fd] text-[#1e1b4b] shadow-[0_4px_15px_rgba(0,0,0,0.1)] transition-all duration-200 hover:bg-[#ddd6fe] hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(0,0,0,0.15)] active:translate-y-0 active:shadow-[0_2px_10px_rgba(0,0,0,0.1)]">
+          <Link to="/login" className="w-full py-4 px-6 rounded-[30px] text-base font-semibold bg-[#c4b5fd] text-[#1e1b4b] text-center shadow-[0_4px_15px_rgba(0,0,0,0.1)] transition-all duration-200 hover:bg-[#ddd6fe] hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(0,0,0,0.15)] active:translate-y-0 active:shadow-[0_2px_10px_rgba(0,0,0,0.1)]">
             Log in
-          </button>
+          </Link>
         </div>
       </div>
 
