@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
-import { useState } from "react";
-import { signInWithGoogle } from "@/lib/firebase";
+import { useEffect, useState } from "react";
+import { signInWithGoogle, auth, onAuthStateChanged } from "@/lib/firebase";
 
 export const Route = createFileRoute("/signup")({
   head: () => ({
