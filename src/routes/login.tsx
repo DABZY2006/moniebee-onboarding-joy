@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Eye, EyeOff, Mail, Lock, Loader2, CheckCircle2, XCircle } from "lucide-react";
+import { signInWithGoogle } from "@/lib/firebase";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
