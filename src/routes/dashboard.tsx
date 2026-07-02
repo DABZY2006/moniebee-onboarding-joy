@@ -99,10 +99,16 @@ function Dashboard() {
       if (p < 1) raf = requestAnimationFrame(tick);
       else {
         setBal(TARGET);
+        persistBalance(TARGET);
+        // seed the transactions list (idempotent — getTransactions seeds on first read)
+        getTransactions();
+        setTxs(getTransactions());
+        setUnread((u) => (u === 0 ? 1 : u));
         setShowToast(true);
         setTimeout(() => setToastExit(true), 3600);
         setTimeout(() => { setShowToast(false); setToastExit(false); }, 4000);
       }
+
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
