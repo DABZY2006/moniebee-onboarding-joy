@@ -1,6 +1,14 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
+import {
+  addTransaction,
+  getTransactions,
+  markAllRead,
+  getReadAt,
+  setBalance as persistBalance,
+  type Tx,
+} from "@/lib/transactions";
 
 
 import {
@@ -18,6 +26,9 @@ import {
   PieChart,
   LineChart as LineIcon,
   User,
+  ArrowUpRight,
+  ArrowDownLeft,
+  Sparkles,
 } from "lucide-react";
 
 export const Route = createFileRoute("/dashboard")({
@@ -31,10 +42,37 @@ function Dashboard() {
   const TARGET = 160000;
   const RATE = 1560; // NGN per USD
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [name, setName] = useState("there");
   const [bal, setBal] = useState(100);
   const [showToast, setShowToast] = useState(false);
   const [toastExit, setToastExit] = useState(false);
+  const [bellOpen, setBellOpen] = useState(false);
+  const [txs, setTxs] = useState<Tx[]>([]);
+  const [unread, setUnread] = useState(0);
+  const cameraRef = useRef<HTMLInputElement>(null);
+  const bellRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const refresh = () => {
+      const list = getTransactions();
+      setTxs(list);
+      const readAt = getReadAt();
+      setUnread(list.filter((t) => t.date > readAt).length);
+    };
+    refresh();
+    const onFocus = () => refresh();
+    window.addEventListener("focus", onFocus);
+    return () => window.removeEventListener("focus", onFocus);
+  }, []);
+
+  useEffect(() => {
+    function onDoc(e: MouseEvent) {
+      if (bellRef.current && !bellRef.current.contains(e.target as Node)) setBellOpen(false);
+    }
+    if (bellOpen) document.addEventListener("mousedown", onDoc);
+    return () => document.removeEventListener("mousedown", onDoc);
+  }, [bellOpen]);
 
   useEffect(() => {
     if (user?.displayName) {
@@ -46,6 +84,7 @@ function Dashboard() {
       if (n) setName(n);
     } catch {}
   }, [user]);
+
 
   useEffect(() => {
     const duration = 2000;
@@ -60,10 +99,16 @@ function Dashboard() {
       if (p < 1) raf = requestAnimationFrame(tick);
       else {
         setBal(TARGET);
+        persistBalance(TARGET);
+        // seed the transactions list (idempotent — getTransactions seeds on first read)
+        getTransactions();
+        setTxs(getTransactions());
+        setUnread((u) => (u === 0 ? 1 : u));
         setShowToast(true);
         setTimeout(() => setToastExit(true), 3600);
         setTimeout(() => { setShowToast(false); setToastExit(false); }, 4000);
       }
+
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
@@ -144,15 +189,102 @@ function Dashboard() {
             <p className="text-[12px] text-white/50">Welcome back</p>
 
           </div>
-          <div className="flex items-center gap-2">
-            <button className="w-10 h-10 rounded-full glass flex items-center justify-center">
+          <div className="flex items-center gap-2 relative" ref={bellRef}>
+            <button
+              onClick={() => {
+                setBellOpen((v) => !v);
+                if (!bellOpen) { markAllRead(); setUnread(0); }
+              }}
+              className="w-10 h-10 rounded-full glass flex items-center justify-center relative"
+              aria-label="Notifications"
+            >
               <Bell size={18} className="text-purple-200" />
+              {unread > 0 && (
+                <span
+                  className="absolute -top-0.5 -right-0.5 min-w-[16px] h-[16px] rounded-full text-[9px] font-bold text-white flex items-center justify-center px-1"
+                  style={{ background: "#ef4444", boxShadow: "0 0 8px rgba(239,68,68,0.7)" }}
+                >
+                  {unread}
+                </span>
+              )}
             </button>
-            <button className="w-10 h-10 rounded-full glass flex items-center justify-center">
+            <button
+              onClick={() => cameraRef.current?.click()}
+              className="w-10 h-10 rounded-full glass flex items-center justify-center"
+              aria-label="Scan QR"
+            >
               <ScanLine size={18} className="text-purple-200" />
             </button>
+            <input
+              ref={cameraRef}
+              type="file"
+              accept="image/*"
+              capture="environment"
+              className="hidden"
+              onChange={() => { /* QR image captured — hook up decoding later */ }}
+            />
+
+            {/* Notifications dropdown */}
+            {bellOpen && (
+              <div
+                className="absolute right-0 top-12 w-[300px] max-h-[380px] overflow-y-auto z-40 rounded-2xl glass p-2"
+                style={{ boxShadow: "0 20px 50px rgba(0,0,0,0.55)" }}
+              >
+                <div className="flex items-center justify-between px-2 py-1.5">
+                  <p className="text-[13px] font-semibold">Notifications</p>
+                  <Link
+                    to="/notifications"
+                    onClick={() => setBellOpen(false)}
+                    className="text-[11px] text-purple-300"
+                  >
+                    View all
+                  </Link>
+                </div>
+                {txs.length === 0 ? (
+                  <p className="px-2 py-6 text-center text-[12px] text-white/50">No activity yet.</p>
+                ) : (
+                  <ul className="space-y-1">
+                    {txs.slice(0, 6).map((t) => {
+                      const isCredit = t.type !== "withdrawal";
+                      return (
+                        <li
+                          key={t.id}
+                          className="flex items-start gap-2.5 px-2 py-2 rounded-xl hover:bg-white/5"
+                        >
+                          <span
+                            className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                            style={{
+                              background: isCredit
+                                ? "rgba(16,185,129,0.15)"
+                                : "rgba(239,68,68,0.15)",
+                              border: `1px solid ${isCredit ? "rgba(16,185,129,0.4)" : "rgba(239,68,68,0.4)"}`,
+                            }}
+                          >
+                            {t.type === "credit" ? (
+                              <ArrowDownLeft size={14} className="text-emerald-300" />
+                            ) : t.type === "withdrawal" ? (
+                              <ArrowUpRight size={14} className="text-red-300" />
+                            ) : (
+                              <Sparkles size={14} className="text-emerald-300" />
+                            )}
+                          </span>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[12px] font-semibold truncate">{t.title}</p>
+                            <p className="text-[10.5px] text-white/60 truncate">{t.message}</p>
+                          </div>
+                          <span className={`text-[11px] font-bold ${isCredit ? "text-emerald-300" : "text-red-300"}`}>
+                            {isCredit ? "+" : "-"}₦{t.amount.toLocaleString("en-NG")}
+                          </span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+              </div>
+            )}
           </div>
         </div>
+
 
         {/* Portfolio card */}
         <div
@@ -208,6 +340,7 @@ function Dashboard() {
           ].map((b) => (
             <button
               key={b.l}
+              onClick={() => { if (b.l === "Airtime") navigate({ to: "/airtime" }); }}
               className="chip-btn glass rounded-2xl py-3 flex flex-col items-center gap-1.5"
             >
               <span className="text-purple-200">{b.i}</span>
