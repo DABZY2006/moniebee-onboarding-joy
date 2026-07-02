@@ -74,6 +74,7 @@ function Dashboard() {
     return () => document.removeEventListener("mousedown", onDoc);
   }, [bellOpen]);
 
+  useEffect(() => {
     if (user?.displayName) {
       setName(user.displayName.split(" ")[0]);
       return;
@@ -83,6 +84,7 @@ function Dashboard() {
       if (n) setName(n);
     } catch {}
   }, [user]);
+
 
   useEffect(() => {
     const duration = 2000;
