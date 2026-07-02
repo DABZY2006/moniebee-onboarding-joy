@@ -1,6 +1,14 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
+import {
+  addTransaction,
+  getTransactions,
+  markAllRead,
+  getReadAt,
+  setBalance as persistBalance,
+  type Tx,
+} from "@/lib/transactions";
 
 
 import {
@@ -18,6 +26,9 @@ import {
   PieChart,
   LineChart as LineIcon,
   User,
+  ArrowUpRight,
+  ArrowDownLeft,
+  Sparkles,
 } from "lucide-react";
 
 export const Route = createFileRoute("/dashboard")({
