@@ -11,9 +11,11 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as PersonalizeRouteImport } from './routes/personalize'
+import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LoadingRouteImport } from './routes/loading'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as AirtimeRouteImport } from './routes/airtime'
 import { Route as IndexRouteImport } from './routes/index'
 
 const SignupRoute = SignupRouteImport.update({
@@ -24,6 +26,11 @@ const SignupRoute = SignupRouteImport.update({
 const PersonalizeRoute = PersonalizeRouteImport.update({
   id: '/personalize',
   path: '/personalize',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotificationsRoute = NotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -41,6 +48,11 @@ const DashboardRoute = DashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AirtimeRoute = AirtimeRouteImport.update({
+  id: '/airtime',
+  path: '/airtime',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -49,26 +61,32 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/airtime': typeof AirtimeRoute
   '/dashboard': typeof DashboardRoute
   '/loading': typeof LoadingRoute
   '/login': typeof LoginRoute
+  '/notifications': typeof NotificationsRoute
   '/personalize': typeof PersonalizeRoute
   '/signup': typeof SignupRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/airtime': typeof AirtimeRoute
   '/dashboard': typeof DashboardRoute
   '/loading': typeof LoadingRoute
   '/login': typeof LoginRoute
+  '/notifications': typeof NotificationsRoute
   '/personalize': typeof PersonalizeRoute
   '/signup': typeof SignupRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/airtime': typeof AirtimeRoute
   '/dashboard': typeof DashboardRoute
   '/loading': typeof LoadingRoute
   '/login': typeof LoginRoute
+  '/notifications': typeof NotificationsRoute
   '/personalize': typeof PersonalizeRoute
   '/signup': typeof SignupRoute
 }
@@ -76,28 +94,42 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/airtime'
     | '/dashboard'
     | '/loading'
     | '/login'
+    | '/notifications'
     | '/personalize'
     | '/signup'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/loading' | '/login' | '/personalize' | '/signup'
-  id:
-    | '__root__'
+  to:
     | '/'
+    | '/airtime'
     | '/dashboard'
     | '/loading'
     | '/login'
+    | '/notifications'
+    | '/personalize'
+    | '/signup'
+  id:
+    | '__root__'
+    | '/'
+    | '/airtime'
+    | '/dashboard'
+    | '/loading'
+    | '/login'
+    | '/notifications'
     | '/personalize'
     | '/signup'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AirtimeRoute: typeof AirtimeRoute
   DashboardRoute: typeof DashboardRoute
   LoadingRoute: typeof LoadingRoute
   LoginRoute: typeof LoginRoute
+  NotificationsRoute: typeof NotificationsRoute
   PersonalizeRoute: typeof PersonalizeRoute
   SignupRoute: typeof SignupRoute
 }
@@ -116,6 +148,13 @@ declare module '@tanstack/react-router' {
       path: '/personalize'
       fullPath: '/personalize'
       preLoaderRoute: typeof PersonalizeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -139,6 +178,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/airtime': {
+      id: '/airtime'
+      path: '/airtime'
+      fullPath: '/airtime'
+      preLoaderRoute: typeof AirtimeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -151,22 +197,14 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AirtimeRoute: AirtimeRoute,
   DashboardRoute: DashboardRoute,
   LoadingRoute: LoadingRoute,
   LoginRoute: LoginRoute,
+  NotificationsRoute: NotificationsRoute,
   PersonalizeRoute: PersonalizeRoute,
   SignupRoute: SignupRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
