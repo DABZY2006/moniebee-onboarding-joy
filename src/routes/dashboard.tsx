@@ -42,12 +42,38 @@ function Dashboard() {
   const TARGET = 160000;
   const RATE = 1560; // NGN per USD
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [name, setName] = useState("there");
   const [bal, setBal] = useState(100);
   const [showToast, setShowToast] = useState(false);
   const [toastExit, setToastExit] = useState(false);
+  const [bellOpen, setBellOpen] = useState(false);
+  const [txs, setTxs] = useState<Tx[]>([]);
+  const [unread, setUnread] = useState(0);
+  const cameraRef = useRef<HTMLInputElement>(null);
+  const bellRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const refresh = () => {
+      const list = getTransactions();
+      setTxs(list);
+      const readAt = getReadAt();
+      setUnread(list.filter((t) => t.date > readAt).length);
+    };
+    refresh();
+    const onFocus = () => refresh();
+    window.addEventListener("focus", onFocus);
+    return () => window.removeEventListener("focus", onFocus);
+  }, []);
+
+  useEffect(() => {
+    function onDoc(e: MouseEvent) {
+      if (bellRef.current && !bellRef.current.contains(e.target as Node)) setBellOpen(false);
+    }
+    if (bellOpen) document.addEventListener("mousedown", onDoc);
+    return () => document.removeEventListener("mousedown", onDoc);
+  }, [bellOpen]);
+
     if (user?.displayName) {
       setName(user.displayName.split(" ")[0]);
       return;
