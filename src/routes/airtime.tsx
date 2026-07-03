@@ -124,6 +124,22 @@ function AirtimePage() {
             <p className="text-[12px] text-white/55">Recharge any network instantly</p>
           </div>
         </div>
+        {/* MONEE CODE */}
+        <p className="text-[12px] text-white/60 mt-5 mb-1.5 ml-1">MONEE CODE</p>
+        <div className="field" style={codeValid ? { borderColor: "rgba(16,185,129,0.7)", boxShadow: "0 0 0 4px rgba(16,185,129,0.12)" } : {}}>
+          <KeyRound size={16} className="text-purple-300/80" />
+          <input
+            value={moneeCode}
+            onChange={(e) => setMoneeCode(e.target.value.toUpperCase().slice(0, 14))}
+            placeholder="Enter MONEE CODE"
+            className="bg-transparent outline-none text-white text-[14px] flex-1 placeholder:text-white/35 tracking-wider"
+          />
+          {codeValid && <CheckCircle2 size={16} className="text-emerald-400" />}
+        </div>
+        {moneeCode && !codeValid && (
+          <p className="mt-1.5 ml-1 text-[11px] text-red-300">Invalid MONEE CODE.</p>
+        )}
+
 
         {/* Balance card */}
         <div
