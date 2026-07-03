@@ -11,28 +11,24 @@ export type Tx = {
 
 const KEY = "moniebee_transactions";
 const READ_KEY = "moniebee_tx_read_at";
+const BAL_KEY = "moniebee_balance";
+const INIT_KEY = "moniebee_wallet_initialized";
+
+export const MONEE_CODE = "MON-22734-EE";
+export const INITIAL_BALANCE = 160000;
 
 export function getTransactions(): Tx[] {
   try {
     const raw = localStorage.getItem(KEY);
     if (raw) return JSON.parse(raw) as Tx[];
   } catch {}
-  // Seed the credit event from the dashboard so it shows up on the notifications page.
-  const seed: Tx[] = [
-    {
-      id: "seed-credit",
-      type: "credit",
-      title: "Payment Received",
-      message: "₦160,000.00 has been credited to your account.",
-      amount: 160000,
-      status: "successful",
-      date: Date.now(),
-    },
-  ];
+  return [];
+}
+
+function saveTransactions(list: Tx[]) {
   try {
-    localStorage.setItem(KEY, JSON.stringify(seed));
+    localStorage.setItem(KEY, JSON.stringify(list));
   } catch {}
-  return seed;
 }
 
 export function addTransaction(tx: Omit<Tx, "id" | "date"> & { date?: number }): Tx {
@@ -42,9 +38,9 @@ export function addTransaction(tx: Omit<Tx, "id" | "date"> & { date?: number }):
     id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
     date: tx.date ?? Date.now(),
   };
-  const next = [item, ...list];
+  saveTransactions([item, ...list]);
   try {
-    localStorage.setItem(KEY, JSON.stringify(next));
+    window.dispatchEvent(new CustomEvent("moniebee:tx"));
   } catch {}
   return item;
 }
@@ -73,16 +69,62 @@ export function formatNaira(n: number) {
   return `₦${n.toLocaleString("en-NG", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
+export function isWalletInitialized(): boolean {
+  try {
+    return localStorage.getItem(INIT_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
 export function getBalance(): number {
   try {
-    const v = localStorage.getItem("moniebee_balance");
-    if (v) return parseFloat(v);
+    const v = localStorage.getItem(BAL_KEY);
+    if (v !== null) return parseFloat(v);
   } catch {}
-  return 160000;
+  return 0;
 }
 
 export function setBalance(v: number) {
   try {
-    localStorage.setItem("moniebee_balance", String(v));
+    localStorage.setItem(BAL_KEY, String(v));
+    localStorage.setItem(INIT_KEY, "1");
+    window.dispatchEvent(new CustomEvent("moniebee:balance", { detail: v }));
   } catch {}
+}
+
+/** Credit the wallet and record a transaction. Returns new balance. */
+export function creditWallet(amount: number, title: string, message: string): number {
+  const next = getBalance() + amount;
+  setBalance(next);
+  addTransaction({ type: "credit", title, message, amount, status: "successful" });
+  return next;
+}
+
+/** Debit the wallet and record a transaction. Returns new balance, or null if insufficient. */
+export function debitWallet(amount: number, title: string, message: string): number | null {
+  const cur = getBalance();
+  if (amount > cur) return null;
+  const next = cur - amount;
+  setBalance(next);
+  addTransaction({ type: "withdrawal", title, message, amount, status: "successful" });
+  return next;
+}
+
+/** Subscribe to balance changes (same tab + other tabs). */
+export function subscribeBalance(cb: (v: number) => void): () => void {
+  const onCustom = (e: Event) => {
+    const v = (e as CustomEvent<number>).detail;
+    if (typeof v === "number") cb(v);
+    else cb(getBalance());
+  };
+  const onStorage = (e: StorageEvent) => {
+    if (e.key === BAL_KEY) cb(getBalance());
+  };
+  window.addEventListener("moniebee:balance", onCustom as EventListener);
+  window.addEventListener("storage", onStorage);
+  return () => {
+    window.removeEventListener("moniebee:balance", onCustom as EventListener);
+    window.removeEventListener("storage", onStorage);
+  };
 }
