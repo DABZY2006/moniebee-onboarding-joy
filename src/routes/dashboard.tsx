@@ -44,12 +44,12 @@ export const Route = createFileRoute("/dashboard")({
 });
 
 function Dashboard() {
-  const TARGET = 160000;
+  const TARGET = INITIAL_BALANCE;
   const RATE = 1560; // NGN per USD
   const { user } = useAuth();
   const navigate = useNavigate();
   const [name, setName] = useState("there");
-  const [bal, setBal] = useState(100);
+  const [bal, setBal] = useState(() => (isWalletInitialized() ? getBalance() : 100));
   const [showToast, setShowToast] = useState(false);
   const [toastExit, setToastExit] = useState(false);
   const [bellOpen, setBellOpen] = useState(false);
@@ -67,8 +67,18 @@ function Dashboard() {
     };
     refresh();
     const onFocus = () => refresh();
+    const onTx = () => refresh();
     window.addEventListener("focus", onFocus);
-    return () => window.removeEventListener("focus", onFocus);
+    window.addEventListener("moniebee:tx", onTx);
+    return () => {
+      window.removeEventListener("focus", onFocus);
+      window.removeEventListener("moniebee:tx", onTx);
+    };
+  }, []);
+
+  // Live-sync balance across pages/tabs
+  useEffect(() => {
+    return subscribeBalance((v) => setBal(v));
   }, []);
 
   useEffect(() => {
@@ -92,9 +102,13 @@ function Dashboard() {
 
 
   useEffect(() => {
+    // Only animate + credit on first-ever wallet load. Otherwise show saved balance.
+    if (isWalletInitialized()) {
+      setBal(getBalance());
+      return;
+    }
     const duration = 2000;
     const start = performance.now();
-
     const from = 100;
     let raf = 0;
     const tick = (t: number) => {
@@ -103,21 +117,19 @@ function Dashboard() {
       setBal(from + (TARGET - from) * eased);
       if (p < 1) raf = requestAnimationFrame(tick);
       else {
+        // Persist initial balance + seed credit transaction exactly once.
+        creditWallet(TARGET, "Payment Received", `₦${TARGET.toLocaleString("en-NG")}.00 has been credited to your account.`);
         setBal(TARGET);
-        persistBalance(TARGET);
-        // seed the transactions list (idempotent — getTransactions seeds on first read)
-        getTransactions();
-        setTxs(getTransactions());
         setUnread((u) => (u === 0 ? 1 : u));
         setShowToast(true);
         setTimeout(() => setToastExit(true), 3600);
         setTimeout(() => { setShowToast(false); setToastExit(false); }, 4000);
       }
-
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
   }, []);
+
 
   const ngn = bal.toLocaleString("en-NG", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const usd = (bal / RATE).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
