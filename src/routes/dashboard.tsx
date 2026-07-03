@@ -2,13 +2,18 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import {
-  addTransaction,
   getTransactions,
   markAllRead,
   getReadAt,
   setBalance as persistBalance,
+  getBalance,
+  isWalletInitialized,
+  creditWallet,
+  subscribeBalance,
+  INITIAL_BALANCE,
   type Tx,
 } from "@/lib/transactions";
+
 
 
 import {
