@@ -357,7 +357,11 @@ function Dashboard() {
           ].map((b) => (
             <button
               key={b.l}
-              onClick={() => { if (b.l === "Airtime") navigate({ to: "/airtime" }); }}
+              onClick={() => {
+                if (b.l === "Airtime") navigate({ to: "/airtime" });
+                else if (b.l === "Withdraw") navigate({ to: "/withdraw" });
+              }}
+
               className="chip-btn glass rounded-2xl py-3 flex flex-col items-center gap-1.5"
             >
               <span className="text-purple-200">{b.i}</span>
