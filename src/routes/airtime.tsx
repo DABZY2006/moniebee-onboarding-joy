@@ -33,21 +33,28 @@ function AirtimePage() {
   const [net, setNet] = useState("mtn");
   const [phone, setPhone] = useState("");
   const [amount, setAmount] = useState<string>("");
-  const [balance, setBal] = useState(160000);
+  const [balance, setBal] = useState(() => getBalance());
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [recent, setRecent] = useState<Tx[]>([]);
+  const [moneeCode, setMoneeCode] = useState("");
+  const codeValid = moneeCode.trim().toUpperCase() === MONEE_CODE;
 
   useEffect(() => {
     setBal(getBalance());
     setRecent(getTransactions().filter((t) => t.title.startsWith("Airtime")).slice(0, 5));
+    return subscribeBalance((v) => setBal(v));
   }, []);
 
   const amt = useMemo(() => parseInt(amount || "0", 10) || 0, [amount]);
 
   async function buy() {
     setError(null);
+    if (!codeValid) {
+      setError("Enter a valid MONEE CODE to continue.");
+      return;
+    }
     if (!/^\d{10,11}$/.test(phone.trim())) {
       setError("Enter a valid phone number.");
       return;
@@ -62,22 +69,23 @@ function AirtimePage() {
     }
     setLoading(true);
     await new Promise((r) => setTimeout(r, 1400));
-    const newBal = balance - amt;
-    setBalance(newBal);
-    setBal(newBal);
     const netName = NETWORKS.find((n) => n.id === net)?.name ?? "";
-    addTransaction({
-      type: "withdrawal",
-      title: `Airtime — ${netName}`,
-      message: `₦${amt.toLocaleString("en-NG")} airtime to ${phone} successful.`,
-      amount: amt,
-      status: "successful",
-    });
+    const result = debitWallet(
+      amt,
+      `Airtime — ${netName}`,
+      `₦${amt.toLocaleString("en-NG")} airtime to ${phone} successful.`,
+    );
+    if (result === null) {
+      setLoading(false);
+      setError("Insufficient balance.");
+      return;
+    }
     setRecent(getTransactions().filter((t) => t.title.startsWith("Airtime")).slice(0, 5));
     setLoading(false);
     setDone(true);
     setTimeout(() => setDone(false), 1600);
   }
+
 
   return (
     <div className="flex min-h-screen justify-center bg-black">
