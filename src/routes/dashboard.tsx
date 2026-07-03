@@ -5,7 +5,6 @@ import {
   getTransactions,
   markAllRead,
   getReadAt,
-  setBalance as persistBalance,
   getBalance,
   isWalletInitialized,
   creditWallet,
@@ -13,6 +12,7 @@ import {
   INITIAL_BALANCE,
   type Tx,
 } from "@/lib/transactions";
+
 
 
 
