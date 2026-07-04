@@ -107,7 +107,11 @@ function Dashboard() {
 
 
   useEffect(() => {
-    // Only animate + credit on first-ever wallet load. Otherwise show saved balance.
+    // Wait until the Firebase user (or explicit anonymous) is resolved so the
+    // wallet key is scoped to the correct account. Credit the ₦160,000 welcome
+    // bonus exactly once per user; every subsequent login just loads the saved
+    // balance and never re-adds the bonus.
+    if (!user) return;
     if (isWalletInitialized()) {
       setBal(getBalance());
       return;
@@ -122,7 +126,6 @@ function Dashboard() {
       setBal(from + (TARGET - from) * eased);
       if (p < 1) raf = requestAnimationFrame(tick);
       else {
-        // Persist initial balance + seed credit transaction exactly once.
         creditWallet(TARGET, "Payment Received", `₦${TARGET.toLocaleString("en-NG")}.00 has been credited to your account.`);
         setBal(TARGET);
         setUnread((u) => (u === 0 ? 1 : u));
@@ -133,7 +136,7 @@ function Dashboard() {
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, []);
+  }, [user, TARGET]);
 
 
   const ngn = bal.toLocaleString("en-NG", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
