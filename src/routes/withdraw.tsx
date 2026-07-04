@@ -273,14 +273,13 @@ function WithdrawPage() {
             </div>
 
             <p className="text-[12px] text-white/60 mt-4 mb-1.5 ml-1">Account Name</p>
-            <div className="field" style={acctName ? { borderColor: "rgba(16,185,129,0.6)" } : {}}>
+            <div className="field">
               <input
-                value={verifying ? "Verifying..." : acctName}
-                readOnly
-                placeholder="Account name will appear here"
+                value={acctName}
+                onChange={(e) => setAcctName(e.target.value.slice(0, 60))}
+                placeholder="Enter account name"
                 className="bg-transparent outline-none text-white text-[14px] flex-1 placeholder:text-white/35"
               />
-              {acctName && <CheckCircle2 size={16} className="text-emerald-400" />}
             </div>
           </>
         )}
