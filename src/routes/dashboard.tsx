@@ -91,6 +91,10 @@ function Dashboard() {
   }, [bellOpen]);
 
   useEffect(() => {
+    if (user?.uid) {
+      setActiveUser(user.uid);
+      setBal(isWalletInitialized() ? getBalance() : 100);
+    }
     if (user?.displayName) {
       setName(user.displayName.split(" ")[0]);
       return;
