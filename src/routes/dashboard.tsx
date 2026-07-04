@@ -9,6 +9,7 @@ import {
   isWalletInitialized,
   creditWallet,
   subscribeBalance,
+  setActiveUser,
   INITIAL_BALANCE,
   type Tx,
 } from "@/lib/transactions";
@@ -21,8 +22,8 @@ import {
   ScanLine,
   Phone,
   ArrowDownToLine,
-  Wifi,
-  History,
+  QrCode,
+  RotateCw,
   TrendingUp,
   Ticket,
   Users,
