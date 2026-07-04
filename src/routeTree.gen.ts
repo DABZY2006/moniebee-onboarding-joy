@@ -10,7 +10,9 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WithdrawRouteImport } from './routes/withdraw'
+import { Route as SpinRouteImport } from './routes/spin'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as QrRewardsRouteImport } from './routes/qr-rewards'
 import { Route as PersonalizeRouteImport } from './routes/personalize'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as LoginRouteImport } from './routes/login'
@@ -24,9 +26,19 @@ const WithdrawRoute = WithdrawRouteImport.update({
   path: '/withdraw',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SpinRoute = SpinRouteImport.update({
+  id: '/spin',
+  path: '/spin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QrRewardsRoute = QrRewardsRouteImport.update({
+  id: '/qr-rewards',
+  path: '/qr-rewards',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PersonalizeRoute = PersonalizeRouteImport.update({
@@ -73,7 +85,9 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
   '/personalize': typeof PersonalizeRoute
+  '/qr-rewards': typeof QrRewardsRoute
   '/signup': typeof SignupRoute
+  '/spin': typeof SpinRoute
   '/withdraw': typeof WithdrawRoute
 }
 export interface FileRoutesByTo {
@@ -84,7 +98,9 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
   '/personalize': typeof PersonalizeRoute
+  '/qr-rewards': typeof QrRewardsRoute
   '/signup': typeof SignupRoute
+  '/spin': typeof SpinRoute
   '/withdraw': typeof WithdrawRoute
 }
 export interface FileRoutesById {
@@ -96,7 +112,9 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
   '/personalize': typeof PersonalizeRoute
+  '/qr-rewards': typeof QrRewardsRoute
   '/signup': typeof SignupRoute
+  '/spin': typeof SpinRoute
   '/withdraw': typeof WithdrawRoute
 }
 export interface FileRouteTypes {
@@ -109,7 +127,9 @@ export interface FileRouteTypes {
     | '/login'
     | '/notifications'
     | '/personalize'
+    | '/qr-rewards'
     | '/signup'
+    | '/spin'
     | '/withdraw'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -120,7 +140,9 @@ export interface FileRouteTypes {
     | '/login'
     | '/notifications'
     | '/personalize'
+    | '/qr-rewards'
     | '/signup'
+    | '/spin'
     | '/withdraw'
   id:
     | '__root__'
@@ -131,7 +153,9 @@ export interface FileRouteTypes {
     | '/login'
     | '/notifications'
     | '/personalize'
+    | '/qr-rewards'
     | '/signup'
+    | '/spin'
     | '/withdraw'
   fileRoutesById: FileRoutesById
 }
@@ -143,7 +167,9 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   NotificationsRoute: typeof NotificationsRoute
   PersonalizeRoute: typeof PersonalizeRoute
+  QrRewardsRoute: typeof QrRewardsRoute
   SignupRoute: typeof SignupRoute
+  SpinRoute: typeof SpinRoute
   WithdrawRoute: typeof WithdrawRoute
 }
 
@@ -156,11 +182,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WithdrawRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/spin': {
+      id: '/spin'
+      path: '/spin'
+      fullPath: '/spin'
+      preLoaderRoute: typeof SpinRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/signup': {
       id: '/signup'
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/qr-rewards': {
+      id: '/qr-rewards'
+      path: '/qr-rewards'
+      fullPath: '/qr-rewards'
+      preLoaderRoute: typeof QrRewardsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/personalize': {
@@ -223,7 +263,9 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   NotificationsRoute: NotificationsRoute,
   PersonalizeRoute: PersonalizeRoute,
+  QrRewardsRoute: QrRewardsRoute,
   SignupRoute: SignupRoute,
+  SpinRoute: SpinRoute,
   WithdrawRoute: WithdrawRoute,
 }
 export const routeTree = rootRouteImport

@@ -9,6 +9,7 @@ import {
   isWalletInitialized,
   creditWallet,
   subscribeBalance,
+  setActiveUser,
   INITIAL_BALANCE,
   type Tx,
 } from "@/lib/transactions";
@@ -21,8 +22,8 @@ import {
   ScanLine,
   Phone,
   ArrowDownToLine,
-  Wifi,
-  History,
+  QrCode,
+  RotateCw,
   TrendingUp,
   Ticket,
   Users,
@@ -90,6 +91,10 @@ function Dashboard() {
   }, [bellOpen]);
 
   useEffect(() => {
+    if (user?.uid) {
+      setActiveUser(user.uid);
+      setBal(isWalletInitialized() ? getBalance() : 100);
+    }
     if (user?.displayName) {
       setName(user.displayName.split(" ")[0]);
       return;
@@ -102,7 +107,11 @@ function Dashboard() {
 
 
   useEffect(() => {
-    // Only animate + credit on first-ever wallet load. Otherwise show saved balance.
+    // Wait until the Firebase user (or explicit anonymous) is resolved so the
+    // wallet key is scoped to the correct account. Credit the ₦160,000 welcome
+    // bonus exactly once per user; every subsequent login just loads the saved
+    // balance and never re-adds the bonus.
+    if (!user) return;
     if (isWalletInitialized()) {
       setBal(getBalance());
       return;
@@ -117,7 +126,6 @@ function Dashboard() {
       setBal(from + (TARGET - from) * eased);
       if (p < 1) raf = requestAnimationFrame(tick);
       else {
-        // Persist initial balance + seed credit transaction exactly once.
         creditWallet(TARGET, "Payment Received", `₦${TARGET.toLocaleString("en-NG")}.00 has been credited to your account.`);
         setBal(TARGET);
         setUnread((u) => (u === 0 ? 1 : u));
@@ -128,7 +136,7 @@ function Dashboard() {
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, []);
+  }, [user, TARGET]);
 
 
   const ngn = bal.toLocaleString("en-NG", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -352,14 +360,16 @@ function Dashboard() {
           {[
             { i: <Phone size={18} />, l: "Airtime" },
             { i: <ArrowDownToLine size={18} />, l: "Withdraw" },
-            { i: <Wifi size={18} />, l: "Data" },
-            { i: <History size={18} />, l: "History" },
+            { i: <QrCode size={18} />, l: "QR Code" },
+            { i: <RotateCw size={18} />, l: "Spin" },
           ].map((b) => (
             <button
               key={b.l}
               onClick={() => {
                 if (b.l === "Airtime") navigate({ to: "/airtime" });
                 else if (b.l === "Withdraw") navigate({ to: "/withdraw" });
+                else if (b.l === "QR Code") navigate({ to: "/qr-rewards" });
+                else if (b.l === "Spin") navigate({ to: "/spin" });
               }}
 
               className="chip-btn glass rounded-2xl py-3 flex flex-col items-center gap-1.5"

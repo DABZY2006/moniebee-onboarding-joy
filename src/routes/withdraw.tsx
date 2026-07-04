@@ -37,15 +37,61 @@ const METHODS = [
 
 const BANKS = [
   "Access Bank",
-  "GTBank",
-  "Zenith Bank",
-  "First Bank",
-  "UBA",
-  "Kuda",
+  "Access Bank (Diamond)",
+  "ALAT by Wema",
+  "Bowen Microfinance Bank",
+  "Carbon",
+  "CEMCS Microfinance Bank",
+  "Citibank Nigeria",
+  "Coronation Merchant Bank",
+  "Ecobank Nigeria",
+  "Ekondo Microfinance Bank",
+  "Fidelity Bank",
+  "FCMB (First City Monument Bank)",
+  "First Bank of Nigeria",
+  "FBNQuest Merchant Bank",
+  "FSDH Merchant Bank",
+  "Globus Bank",
+  "GoMoney",
+  "GTBank (Guaranty Trust Bank)",
+  "Hackman Microfinance Bank",
+  "Hasal Microfinance Bank",
+  "Heritage Bank",
+  "Jaiz Bank",
+  "Kayvee Microfinance Bank",
+  "Keystone Bank",
+  "Kuda Microfinance Bank",
+  "Lagos Building Investment Company",
+  "Mint MFB",
+  "Moniepoint MFB",
+  "MTN MoMo PSB",
+  "9mobile 9Payment SB",
+  "NPF Microfinance Bank",
+  "OneFinance (Onebank)",
   "Opay",
-  "Moniepoint",
   "Palmpay",
+  "Parallex Bank",
+  "Paycom (Opay)",
+  "Petra Microfinance Bank",
+  "Polaris Bank",
+  "Providus Bank",
+  "Rand Merchant Bank",
+  "Rubies MFB",
+  "Sparkle Microfinance Bank",
+  "Stanbic IBTC Bank",
+  "Standard Chartered Bank",
   "Sterling Bank",
+  "Suntrust Bank",
+  "TAJ Bank",
+  "TCF MFB",
+  "Titan Trust Bank",
+  "Union Bank of Nigeria",
+  "United Bank for Africa (UBA)",
+  "Unity Bank",
+  "VFD Microfinance Bank",
+  "Wema Bank",
+  "Zenith Bank",
+  "Eyowo",
 ];
 
 const QUICK = [1000, 5000, 10000, 20000];
@@ -58,7 +104,7 @@ function WithdrawPage() {
   const [bank, setBank] = useState("");
   const [acct, setAcct] = useState("");
   const [acctName, setAcctName] = useState("");
-  const [verifying, setVerifying] = useState(false);
+  
   const [amount, setAmount] = useState("");
   const [code, setCode] = useState("");
   const [codeStatus, setCodeStatus] = useState<"idle" | "ok" | "bad">("idle");
@@ -68,21 +114,6 @@ function WithdrawPage() {
 
   useEffect(() => subscribeBalance((v) => setBalance(v)), []);
 
-  // Auto-verify account name when bank + 10-digit account are set
-  useEffect(() => {
-    setAcctName("");
-    if (bank && /^\d{10}$/.test(acct)) {
-      setVerifying(true);
-      const t = setTimeout(() => {
-        // Fake resolver — deterministic dummy name
-        const names = ["Alex Johnson", "Chinedu Okafor", "Aisha Bello", "Tunde Adekunle"];
-        setAcctName(names[parseInt(acct.slice(-1), 10) % names.length]);
-        setVerifying(false);
-      }, 900);
-      return () => clearTimeout(t);
-    }
-  }, [bank, acct]);
-
   const amt = useMemo(() => parseInt(amount || "0", 10) || 0, [amount]);
 
   function verifyCode() {
@@ -91,8 +122,8 @@ function WithdrawPage() {
 
   async function withdraw() {
     setError(null);
-    if (method === "bank" && (!bank || !acctName)) {
-      setError("Select bank and verify account first.");
+    if (method === "bank" && (!bank || !acct || !acctName.trim())) {
+      setError("Select bank and enter account number & name.");
       return;
     }
     if (amt < 100) {
@@ -242,14 +273,13 @@ function WithdrawPage() {
             </div>
 
             <p className="text-[12px] text-white/60 mt-4 mb-1.5 ml-1">Account Name</p>
-            <div className="field" style={acctName ? { borderColor: "rgba(16,185,129,0.6)" } : {}}>
+            <div className="field">
               <input
-                value={verifying ? "Verifying..." : acctName}
-                readOnly
-                placeholder="Account name will appear here"
+                value={acctName}
+                onChange={(e) => setAcctName(e.target.value.slice(0, 60))}
+                placeholder="Enter account name"
                 className="bg-transparent outline-none text-white text-[14px] flex-1 placeholder:text-white/35"
               />
-              {acctName && <CheckCircle2 size={16} className="text-emerald-400" />}
             </div>
           </>
         )}
