@@ -104,7 +104,7 @@ function WithdrawPage() {
   const [bank, setBank] = useState("");
   const [acct, setAcct] = useState("");
   const [acctName, setAcctName] = useState("");
-  const [verifying, setVerifying] = useState(false);
+  
   const [amount, setAmount] = useState("");
   const [code, setCode] = useState("");
   const [codeStatus, setCodeStatus] = useState<"idle" | "ok" | "bad">("idle");
