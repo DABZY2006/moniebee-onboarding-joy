@@ -360,14 +360,16 @@ function Dashboard() {
           {[
             { i: <Phone size={18} />, l: "Airtime" },
             { i: <ArrowDownToLine size={18} />, l: "Withdraw" },
-            { i: <Wifi size={18} />, l: "Data" },
-            { i: <History size={18} />, l: "History" },
+            { i: <QrCode size={18} />, l: "QR Code" },
+            { i: <RotateCw size={18} />, l: "Spin" },
           ].map((b) => (
             <button
               key={b.l}
               onClick={() => {
                 if (b.l === "Airtime") navigate({ to: "/airtime" });
                 else if (b.l === "Withdraw") navigate({ to: "/withdraw" });
+                else if (b.l === "QR Code") navigate({ to: "/qr-rewards" });
+                else if (b.l === "Spin") navigate({ to: "/spin" });
               }}
 
               className="chip-btn glass rounded-2xl py-3 flex flex-col items-center gap-1.5"
