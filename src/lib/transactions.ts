@@ -9,17 +9,62 @@ export type Tx = {
   read?: boolean;
 };
 
-const KEY = "moniebee_transactions";
-const READ_KEY = "moniebee_tx_read_at";
-const BAL_KEY = "moniebee_balance";
-const INIT_KEY = "moniebee_wallet_initialized";
+// Legacy (pre-multi-user) storage keys — kept for migration/back-compat.
+const LEGACY_TX_KEY = "moniebee_transactions";
+const LEGACY_READ_KEY = "moniebee_tx_read_at";
+const LEGACY_BAL_KEY = "moniebee_balance";
+const LEGACY_INIT_KEY = "moniebee_wallet_initialized";
 
-export const MONEE_CODE = "MON-22734-EE";
+export const MONEE_CODE = "MNB-U7K9-P4X2";
 export const INITIAL_BALANCE = 160000;
 
+// ---- Active user scoping ---------------------------------------------------
+// The wallet is scoped to the authenticated user's uid. New users get the
+// welcome credit exactly once; existing users always load their saved balance.
+let activeUid: string | null = null;
+
+function readActiveUid(): string | null {
+  if (activeUid) return activeUid;
+  try {
+    return localStorage.getItem("moniebee_active_uid");
+  } catch {
+    return null;
+  }
+}
+
+export function setActiveUser(uid: string | null) {
+  activeUid = uid;
+  try {
+    if (uid) localStorage.setItem("moniebee_active_uid", uid);
+    else localStorage.removeItem("moniebee_active_uid");
+  } catch {}
+  try {
+    window.dispatchEvent(new CustomEvent("moniebee:balance", { detail: getBalance() }));
+    window.dispatchEvent(new CustomEvent("moniebee:tx"));
+  } catch {}
+}
+
+function txKey() {
+  const uid = readActiveUid();
+  return uid ? `moniebee_transactions:${uid}` : LEGACY_TX_KEY;
+}
+function readKey() {
+  const uid = readActiveUid();
+  return uid ? `moniebee_tx_read_at:${uid}` : LEGACY_READ_KEY;
+}
+function balKey() {
+  const uid = readActiveUid();
+  return uid ? `moniebee_balance:${uid}` : LEGACY_BAL_KEY;
+}
+function initKey() {
+  const uid = readActiveUid();
+  return uid ? `moniebee_wallet_initialized:${uid}` : LEGACY_INIT_KEY;
+}
+
+// ---- Transactions ----------------------------------------------------------
 export function getTransactions(): Tx[] {
   try {
-    const raw = localStorage.getItem(KEY);
+    const raw = localStorage.getItem(txKey());
     if (raw) return JSON.parse(raw) as Tx[];
   } catch {}
   return [];
@@ -27,7 +72,7 @@ export function getTransactions(): Tx[] {
 
 function saveTransactions(list: Tx[]) {
   try {
-    localStorage.setItem(KEY, JSON.stringify(list));
+    localStorage.setItem(txKey(), JSON.stringify(list));
   } catch {}
 }
 
@@ -47,13 +92,13 @@ export function addTransaction(tx: Omit<Tx, "id" | "date"> & { date?: number }):
 
 export function markAllRead() {
   try {
-    localStorage.setItem(READ_KEY, String(Date.now()));
+    localStorage.setItem(readKey(), String(Date.now()));
   } catch {}
 }
 
 export function getReadAt(): number {
   try {
-    const v = localStorage.getItem(READ_KEY);
+    const v = localStorage.getItem(readKey());
     return v ? parseInt(v, 10) : 0;
   } catch {
     return 0;
@@ -65,13 +110,14 @@ export function unreadCount(): number {
   return getTransactions().filter((t) => t.date > readAt).length;
 }
 
+// ---- Balance ---------------------------------------------------------------
 export function formatNaira(n: number) {
   return `₦${n.toLocaleString("en-NG", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
 export function isWalletInitialized(): boolean {
   try {
-    return localStorage.getItem(INIT_KEY) === "1";
+    return localStorage.getItem(initKey()) === "1";
   } catch {
     return false;
   }
@@ -79,7 +125,7 @@ export function isWalletInitialized(): boolean {
 
 export function getBalance(): number {
   try {
-    const v = localStorage.getItem(BAL_KEY);
+    const v = localStorage.getItem(balKey());
     if (v !== null) return parseFloat(v);
   } catch {}
   return 0;
@@ -87,8 +133,8 @@ export function getBalance(): number {
 
 export function setBalance(v: number) {
   try {
-    localStorage.setItem(BAL_KEY, String(v));
-    localStorage.setItem(INIT_KEY, "1");
+    localStorage.setItem(balKey(), String(v));
+    localStorage.setItem(initKey(), "1");
     window.dispatchEvent(new CustomEvent("moniebee:balance", { detail: v }));
   } catch {}
 }
@@ -119,7 +165,7 @@ export function subscribeBalance(cb: (v: number) => void): () => void {
     else cb(getBalance());
   };
   const onStorage = (e: StorageEvent) => {
-    if (e.key === BAL_KEY) cb(getBalance());
+    if (e.key && e.key.startsWith("moniebee_balance")) cb(getBalance());
   };
   window.addEventListener("moniebee:balance", onCustom as EventListener);
   window.addEventListener("storage", onStorage);
