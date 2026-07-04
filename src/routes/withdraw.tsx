@@ -114,21 +114,6 @@ function WithdrawPage() {
 
   useEffect(() => subscribeBalance((v) => setBalance(v)), []);
 
-  // Auto-verify account name when bank + 10-digit account are set
-  useEffect(() => {
-    setAcctName("");
-    if (bank && /^\d{10}$/.test(acct)) {
-      setVerifying(true);
-      const t = setTimeout(() => {
-        // Fake resolver — deterministic dummy name
-        const names = ["Alex Johnson", "Chinedu Okafor", "Aisha Bello", "Tunde Adekunle"];
-        setAcctName(names[parseInt(acct.slice(-1), 10) % names.length]);
-        setVerifying(false);
-      }, 900);
-      return () => clearTimeout(t);
-    }
-  }, [bank, acct]);
-
   const amt = useMemo(() => parseInt(amount || "0", 10) || 0, [amount]);
 
   function verifyCode() {
@@ -137,8 +122,8 @@ function WithdrawPage() {
 
   async function withdraw() {
     setError(null);
-    if (method === "bank" && (!bank || !acctName)) {
-      setError("Select bank and verify account first.");
+    if (method === "bank" && (!bank || !acct || !acctName.trim())) {
+      setError("Select bank and enter account number & name.");
       return;
     }
     if (amt < 100) {
