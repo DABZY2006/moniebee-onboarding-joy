@@ -15,6 +15,7 @@ import { Route as SpinRouteImport } from './routes/spin'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as QrRewardsRouteImport } from './routes/qr-rewards'
 import { Route as PersonalizeRouteImport } from './routes/personalize'
+import { Route as PaymentRouteImport } from './routes/payment'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LoadingRouteImport } from './routes/loading'
@@ -52,6 +53,11 @@ const QrRewardsRoute = QrRewardsRouteImport.update({
 const PersonalizeRoute = PersonalizeRouteImport.update({
   id: '/personalize',
   path: '/personalize',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaymentRoute = PaymentRouteImport.update({
+  id: '/payment',
+  path: '/payment',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NotificationsRoute = NotificationsRouteImport.update({
@@ -104,6 +110,7 @@ export interface FileRoutesByFullPath {
   '/loading': typeof LoadingRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
+  '/payment': typeof PaymentRoute
   '/personalize': typeof PersonalizeRoute
   '/qr-rewards': typeof QrRewardsRoute
   '/signup': typeof SignupRoute
@@ -120,6 +127,7 @@ export interface FileRoutesByTo {
   '/loading': typeof LoadingRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
+  '/payment': typeof PaymentRoute
   '/personalize': typeof PersonalizeRoute
   '/qr-rewards': typeof QrRewardsRoute
   '/signup': typeof SignupRoute
@@ -137,6 +145,7 @@ export interface FileRoutesById {
   '/loading': typeof LoadingRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
+  '/payment': typeof PaymentRoute
   '/personalize': typeof PersonalizeRoute
   '/qr-rewards': typeof QrRewardsRoute
   '/signup': typeof SignupRoute
@@ -155,6 +164,7 @@ export interface FileRouteTypes {
     | '/loading'
     | '/login'
     | '/notifications'
+    | '/payment'
     | '/personalize'
     | '/qr-rewards'
     | '/signup'
@@ -171,6 +181,7 @@ export interface FileRouteTypes {
     | '/loading'
     | '/login'
     | '/notifications'
+    | '/payment'
     | '/personalize'
     | '/qr-rewards'
     | '/signup'
@@ -187,6 +198,7 @@ export interface FileRouteTypes {
     | '/loading'
     | '/login'
     | '/notifications'
+    | '/payment'
     | '/personalize'
     | '/qr-rewards'
     | '/signup'
@@ -204,6 +216,7 @@ export interface RootRouteChildren {
   LoadingRoute: typeof LoadingRoute
   LoginRoute: typeof LoginRoute
   NotificationsRoute: typeof NotificationsRoute
+  PaymentRoute: typeof PaymentRoute
   PersonalizeRoute: typeof PersonalizeRoute
   QrRewardsRoute: typeof QrRewardsRoute
   SignupRoute: typeof SignupRoute
@@ -254,6 +267,13 @@ declare module '@tanstack/react-router' {
       path: '/personalize'
       fullPath: '/personalize'
       preLoaderRoute: typeof PersonalizeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payment': {
+      id: '/payment'
+      path: '/payment'
+      fullPath: '/payment'
+      preLoaderRoute: typeof PaymentRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/notifications': {
@@ -324,6 +344,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoadingRoute: LoadingRoute,
   LoginRoute: LoginRoute,
   NotificationsRoute: NotificationsRoute,
+  PaymentRoute: PaymentRoute,
   PersonalizeRoute: PersonalizeRoute,
   QrRewardsRoute: QrRewardsRoute,
   SignupRoute: SignupRoute,
