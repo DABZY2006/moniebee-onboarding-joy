@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WithdrawRouteImport } from './routes/withdraw'
+import { Route as UpgradeRouteImport } from './routes/upgrade'
 import { Route as SpinRouteImport } from './routes/spin'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as QrRewardsRouteImport } from './routes/qr-rewards'
@@ -24,6 +25,11 @@ import { Route as IndexRouteImport } from './routes/index'
 const WithdrawRoute = WithdrawRouteImport.update({
   id: '/withdraw',
   path: '/withdraw',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UpgradeRoute = UpgradeRouteImport.update({
+  id: '/upgrade',
+  path: '/upgrade',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SpinRoute = SpinRouteImport.update({
@@ -88,6 +94,7 @@ export interface FileRoutesByFullPath {
   '/qr-rewards': typeof QrRewardsRoute
   '/signup': typeof SignupRoute
   '/spin': typeof SpinRoute
+  '/upgrade': typeof UpgradeRoute
   '/withdraw': typeof WithdrawRoute
 }
 export interface FileRoutesByTo {
@@ -101,6 +108,7 @@ export interface FileRoutesByTo {
   '/qr-rewards': typeof QrRewardsRoute
   '/signup': typeof SignupRoute
   '/spin': typeof SpinRoute
+  '/upgrade': typeof UpgradeRoute
   '/withdraw': typeof WithdrawRoute
 }
 export interface FileRoutesById {
@@ -115,6 +123,7 @@ export interface FileRoutesById {
   '/qr-rewards': typeof QrRewardsRoute
   '/signup': typeof SignupRoute
   '/spin': typeof SpinRoute
+  '/upgrade': typeof UpgradeRoute
   '/withdraw': typeof WithdrawRoute
 }
 export interface FileRouteTypes {
@@ -130,6 +139,7 @@ export interface FileRouteTypes {
     | '/qr-rewards'
     | '/signup'
     | '/spin'
+    | '/upgrade'
     | '/withdraw'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -143,6 +153,7 @@ export interface FileRouteTypes {
     | '/qr-rewards'
     | '/signup'
     | '/spin'
+    | '/upgrade'
     | '/withdraw'
   id:
     | '__root__'
@@ -156,6 +167,7 @@ export interface FileRouteTypes {
     | '/qr-rewards'
     | '/signup'
     | '/spin'
+    | '/upgrade'
     | '/withdraw'
   fileRoutesById: FileRoutesById
 }
@@ -170,6 +182,7 @@ export interface RootRouteChildren {
   QrRewardsRoute: typeof QrRewardsRoute
   SignupRoute: typeof SignupRoute
   SpinRoute: typeof SpinRoute
+  UpgradeRoute: typeof UpgradeRoute
   WithdrawRoute: typeof WithdrawRoute
 }
 
@@ -180,6 +193,13 @@ declare module '@tanstack/react-router' {
       path: '/withdraw'
       fullPath: '/withdraw'
       preLoaderRoute: typeof WithdrawRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/upgrade': {
+      id: '/upgrade'
+      path: '/upgrade'
+      fullPath: '/upgrade'
+      preLoaderRoute: typeof UpgradeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/spin': {
@@ -266,6 +286,7 @@ const rootRouteChildren: RootRouteChildren = {
   QrRewardsRoute: QrRewardsRoute,
   SignupRoute: SignupRoute,
   SpinRoute: SpinRoute,
+  UpgradeRoute: UpgradeRoute,
   WithdrawRoute: WithdrawRoute,
 }
 export const routeTree = rootRouteImport
