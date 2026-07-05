@@ -10,20 +10,29 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WithdrawRouteImport } from './routes/withdraw'
+import { Route as UpgradeRouteImport } from './routes/upgrade'
 import { Route as SpinRouteImport } from './routes/spin'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as QrRewardsRouteImport } from './routes/qr-rewards'
 import { Route as PersonalizeRouteImport } from './routes/personalize'
+import { Route as PaymentRouteImport } from './routes/payment'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LoadingRouteImport } from './routes/loading'
+import { Route as GeneratingRouteImport } from './routes/generating'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as ConfirmEmailRouteImport } from './routes/confirm-email'
 import { Route as AirtimeRouteImport } from './routes/airtime'
 import { Route as IndexRouteImport } from './routes/index'
 
 const WithdrawRoute = WithdrawRouteImport.update({
   id: '/withdraw',
   path: '/withdraw',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UpgradeRoute = UpgradeRouteImport.update({
+  id: '/upgrade',
+  path: '/upgrade',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SpinRoute = SpinRouteImport.update({
@@ -46,6 +55,11 @@ const PersonalizeRoute = PersonalizeRouteImport.update({
   path: '/personalize',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PaymentRoute = PaymentRouteImport.update({
+  id: '/payment',
+  path: '/payment',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const NotificationsRoute = NotificationsRouteImport.update({
   id: '/notifications',
   path: '/notifications',
@@ -61,9 +75,19 @@ const LoadingRoute = LoadingRouteImport.update({
   path: '/loading',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GeneratingRoute = GeneratingRouteImport.update({
+  id: '/generating',
+  path: '/generating',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConfirmEmailRoute = ConfirmEmailRouteImport.update({
+  id: '/confirm-email',
+  path: '/confirm-email',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AirtimeRoute = AirtimeRouteImport.update({
@@ -80,41 +104,53 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/airtime': typeof AirtimeRoute
+  '/confirm-email': typeof ConfirmEmailRoute
   '/dashboard': typeof DashboardRoute
+  '/generating': typeof GeneratingRoute
   '/loading': typeof LoadingRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
+  '/payment': typeof PaymentRoute
   '/personalize': typeof PersonalizeRoute
   '/qr-rewards': typeof QrRewardsRoute
   '/signup': typeof SignupRoute
   '/spin': typeof SpinRoute
+  '/upgrade': typeof UpgradeRoute
   '/withdraw': typeof WithdrawRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/airtime': typeof AirtimeRoute
+  '/confirm-email': typeof ConfirmEmailRoute
   '/dashboard': typeof DashboardRoute
+  '/generating': typeof GeneratingRoute
   '/loading': typeof LoadingRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
+  '/payment': typeof PaymentRoute
   '/personalize': typeof PersonalizeRoute
   '/qr-rewards': typeof QrRewardsRoute
   '/signup': typeof SignupRoute
   '/spin': typeof SpinRoute
+  '/upgrade': typeof UpgradeRoute
   '/withdraw': typeof WithdrawRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/airtime': typeof AirtimeRoute
+  '/confirm-email': typeof ConfirmEmailRoute
   '/dashboard': typeof DashboardRoute
+  '/generating': typeof GeneratingRoute
   '/loading': typeof LoadingRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
+  '/payment': typeof PaymentRoute
   '/personalize': typeof PersonalizeRoute
   '/qr-rewards': typeof QrRewardsRoute
   '/signup': typeof SignupRoute
   '/spin': typeof SpinRoute
+  '/upgrade': typeof UpgradeRoute
   '/withdraw': typeof WithdrawRoute
 }
 export interface FileRouteTypes {
@@ -122,54 +158,70 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/airtime'
+    | '/confirm-email'
     | '/dashboard'
+    | '/generating'
     | '/loading'
     | '/login'
     | '/notifications'
+    | '/payment'
     | '/personalize'
     | '/qr-rewards'
     | '/signup'
     | '/spin'
+    | '/upgrade'
     | '/withdraw'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/airtime'
+    | '/confirm-email'
     | '/dashboard'
+    | '/generating'
     | '/loading'
     | '/login'
     | '/notifications'
+    | '/payment'
     | '/personalize'
     | '/qr-rewards'
     | '/signup'
     | '/spin'
+    | '/upgrade'
     | '/withdraw'
   id:
     | '__root__'
     | '/'
     | '/airtime'
+    | '/confirm-email'
     | '/dashboard'
+    | '/generating'
     | '/loading'
     | '/login'
     | '/notifications'
+    | '/payment'
     | '/personalize'
     | '/qr-rewards'
     | '/signup'
     | '/spin'
+    | '/upgrade'
     | '/withdraw'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AirtimeRoute: typeof AirtimeRoute
+  ConfirmEmailRoute: typeof ConfirmEmailRoute
   DashboardRoute: typeof DashboardRoute
+  GeneratingRoute: typeof GeneratingRoute
   LoadingRoute: typeof LoadingRoute
   LoginRoute: typeof LoginRoute
   NotificationsRoute: typeof NotificationsRoute
+  PaymentRoute: typeof PaymentRoute
   PersonalizeRoute: typeof PersonalizeRoute
   QrRewardsRoute: typeof QrRewardsRoute
   SignupRoute: typeof SignupRoute
   SpinRoute: typeof SpinRoute
+  UpgradeRoute: typeof UpgradeRoute
   WithdrawRoute: typeof WithdrawRoute
 }
 
@@ -180,6 +232,13 @@ declare module '@tanstack/react-router' {
       path: '/withdraw'
       fullPath: '/withdraw'
       preLoaderRoute: typeof WithdrawRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/upgrade': {
+      id: '/upgrade'
+      path: '/upgrade'
+      fullPath: '/upgrade'
+      preLoaderRoute: typeof UpgradeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/spin': {
@@ -210,6 +269,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PersonalizeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/payment': {
+      id: '/payment'
+      path: '/payment'
+      fullPath: '/payment'
+      preLoaderRoute: typeof PaymentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/notifications': {
       id: '/notifications'
       path: '/notifications'
@@ -231,11 +297,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoadingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/generating': {
+      id: '/generating'
+      path: '/generating'
+      fullPath: '/generating'
+      preLoaderRoute: typeof GeneratingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/confirm-email': {
+      id: '/confirm-email'
+      path: '/confirm-email'
+      fullPath: '/confirm-email'
+      preLoaderRoute: typeof ConfirmEmailRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/airtime': {
@@ -258,14 +338,18 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AirtimeRoute: AirtimeRoute,
+  ConfirmEmailRoute: ConfirmEmailRoute,
   DashboardRoute: DashboardRoute,
+  GeneratingRoute: GeneratingRoute,
   LoadingRoute: LoadingRoute,
   LoginRoute: LoginRoute,
   NotificationsRoute: NotificationsRoute,
+  PaymentRoute: PaymentRoute,
   PersonalizeRoute: PersonalizeRoute,
   QrRewardsRoute: QrRewardsRoute,
   SignupRoute: SignupRoute,
   SpinRoute: SpinRoute,
+  UpgradeRoute: UpgradeRoute,
   WithdrawRoute: WithdrawRoute,
 }
 export const routeTree = rootRouteImport
