@@ -18,6 +18,7 @@ import { Route as PersonalizeRouteImport } from './routes/personalize'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LoadingRouteImport } from './routes/loading'
+import { Route as GeneratingRouteImport } from './routes/generating'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ConfirmEmailRouteImport } from './routes/confirm-email'
 import { Route as AirtimeRouteImport } from './routes/airtime'
@@ -68,6 +69,11 @@ const LoadingRoute = LoadingRouteImport.update({
   path: '/loading',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GeneratingRoute = GeneratingRouteImport.update({
+  id: '/generating',
+  path: '/generating',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -94,6 +100,7 @@ export interface FileRoutesByFullPath {
   '/airtime': typeof AirtimeRoute
   '/confirm-email': typeof ConfirmEmailRoute
   '/dashboard': typeof DashboardRoute
+  '/generating': typeof GeneratingRoute
   '/loading': typeof LoadingRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
@@ -109,6 +116,7 @@ export interface FileRoutesByTo {
   '/airtime': typeof AirtimeRoute
   '/confirm-email': typeof ConfirmEmailRoute
   '/dashboard': typeof DashboardRoute
+  '/generating': typeof GeneratingRoute
   '/loading': typeof LoadingRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
@@ -125,6 +133,7 @@ export interface FileRoutesById {
   '/airtime': typeof AirtimeRoute
   '/confirm-email': typeof ConfirmEmailRoute
   '/dashboard': typeof DashboardRoute
+  '/generating': typeof GeneratingRoute
   '/loading': typeof LoadingRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
@@ -142,6 +151,7 @@ export interface FileRouteTypes {
     | '/airtime'
     | '/confirm-email'
     | '/dashboard'
+    | '/generating'
     | '/loading'
     | '/login'
     | '/notifications'
@@ -157,6 +167,7 @@ export interface FileRouteTypes {
     | '/airtime'
     | '/confirm-email'
     | '/dashboard'
+    | '/generating'
     | '/loading'
     | '/login'
     | '/notifications'
@@ -172,6 +183,7 @@ export interface FileRouteTypes {
     | '/airtime'
     | '/confirm-email'
     | '/dashboard'
+    | '/generating'
     | '/loading'
     | '/login'
     | '/notifications'
@@ -188,6 +200,7 @@ export interface RootRouteChildren {
   AirtimeRoute: typeof AirtimeRoute
   ConfirmEmailRoute: typeof ConfirmEmailRoute
   DashboardRoute: typeof DashboardRoute
+  GeneratingRoute: typeof GeneratingRoute
   LoadingRoute: typeof LoadingRoute
   LoginRoute: typeof LoginRoute
   NotificationsRoute: typeof NotificationsRoute
@@ -264,6 +277,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoadingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/generating': {
+      id: '/generating'
+      path: '/generating'
+      fullPath: '/generating'
+      preLoaderRoute: typeof GeneratingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
@@ -300,6 +320,7 @@ const rootRouteChildren: RootRouteChildren = {
   AirtimeRoute: AirtimeRoute,
   ConfirmEmailRoute: ConfirmEmailRoute,
   DashboardRoute: DashboardRoute,
+  GeneratingRoute: GeneratingRoute,
   LoadingRoute: LoadingRoute,
   LoginRoute: LoginRoute,
   NotificationsRoute: NotificationsRoute,
