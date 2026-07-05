@@ -387,10 +387,13 @@ function Dashboard() {
             { i: <TrendingUp size={18} />, l: "Invest Now" },
             { i: <Ticket size={18} />, l: "Buy Code" },
             { i: <Users size={18} />, l: "Refer & Earn" },
-            { i: <GraduationCap size={18} />, l: "Learn" },
+            { i: <GraduationCap size={18} />, l: "Upgrade" },
           ].map((b) => (
             <button
               key={b.l}
+              onClick={() => {
+                if (b.l === "Upgrade") navigate({ to: "/upgrade" });
+              }}
               className="glass rounded-2xl py-4 px-4 flex items-center gap-3 text-left"
             >
               <span
