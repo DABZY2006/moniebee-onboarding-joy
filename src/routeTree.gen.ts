@@ -25,6 +25,7 @@ import { Route as GeneratingRouteImport } from './routes/generating'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ConfirmEmailRouteImport } from './routes/confirm-email'
 import { Route as AirtimeRouteImport } from './routes/airtime'
+import { Route as AccountRouteImport } from './routes/account'
 import { Route as IndexRouteImport } from './routes/index'
 
 const WithdrawRoute = WithdrawRouteImport.update({
@@ -107,6 +108,11 @@ const AirtimeRoute = AirtimeRouteImport.update({
   path: '/airtime',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AccountRoute = AccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -115,6 +121,7 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
   '/airtime': typeof AirtimeRoute
   '/confirm-email': typeof ConfirmEmailRoute
   '/dashboard': typeof DashboardRoute
@@ -134,6 +141,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
   '/airtime': typeof AirtimeRoute
   '/confirm-email': typeof ConfirmEmailRoute
   '/dashboard': typeof DashboardRoute
@@ -154,6 +162,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
   '/airtime': typeof AirtimeRoute
   '/confirm-email': typeof ConfirmEmailRoute
   '/dashboard': typeof DashboardRoute
@@ -175,6 +184,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/account'
     | '/airtime'
     | '/confirm-email'
     | '/dashboard'
@@ -194,6 +204,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/account'
     | '/airtime'
     | '/confirm-email'
     | '/dashboard'
@@ -213,6 +224,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/account'
     | '/airtime'
     | '/confirm-email'
     | '/dashboard'
@@ -233,6 +245,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AccountRoute: typeof AccountRoute
   AirtimeRoute: typeof AirtimeRoute
   ConfirmEmailRoute: typeof ConfirmEmailRoute
   DashboardRoute: typeof DashboardRoute
@@ -365,6 +378,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AirtimeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/account': {
+      id: '/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AccountRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -377,6 +397,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AccountRoute: AccountRoute,
   AirtimeRoute: AirtimeRoute,
   ConfirmEmailRoute: ConfirmEmailRoute,
   DashboardRoute: DashboardRoute,

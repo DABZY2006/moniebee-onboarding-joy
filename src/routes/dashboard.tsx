@@ -393,6 +393,9 @@ function Dashboard() {
               key={b.l}
               onClick={() => {
                 if (b.l === "Upgrade") navigate({ to: "/upgrade" });
+                else if (b.l === "Buy Code") navigate({ to: "/confirm-email" });
+                else if (b.l === "Invest Now") navigate({ to: "/invest" });
+                else if (b.l === "Refer & Earn") navigate({ to: "/spin" });
               }}
               className="glass rounded-2xl py-4 px-4 flex items-center gap-3 text-left"
             >
