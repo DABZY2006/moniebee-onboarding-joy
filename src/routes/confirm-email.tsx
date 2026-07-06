@@ -27,7 +27,7 @@ function ConfirmEmailPage() {
   };
 
   const handleContinue = () => {
-    navigate({ to: "/generating" });
+    navigate({ to: "/generating", search: { next: "/payment", ms: 5000 } as any });
   };
 
   return (
