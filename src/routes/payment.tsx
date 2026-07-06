@@ -35,11 +35,7 @@ function PaymentPage() {
   };
 
   const handlePaid = () => {
-    setVerifying(true);
-    setTimeout(() => {
-      setVerifying(false);
-      setSuccess(true);
-    }, 10000);
+    navigate({ to: "/generating", search: { next: "/payment-success", ms: 10000 } as any });
   };
 
   const handleContinue = () => {

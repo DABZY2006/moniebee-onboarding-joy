@@ -36,6 +36,7 @@ import {
   ArrowDownLeft,
   Sparkles,
 } from "lucide-react";
+import { MoneeAssistant } from "@/components/MoneeAssistant";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
@@ -393,6 +394,9 @@ function Dashboard() {
               key={b.l}
               onClick={() => {
                 if (b.l === "Upgrade") navigate({ to: "/upgrade" });
+                else if (b.l === "Buy Code") navigate({ to: "/confirm-email" });
+                else if (b.l === "Invest Now") navigate({ to: "/invest" });
+                else if (b.l === "Refer & Earn") navigate({ to: "/spin" });
               }}
               className="glass rounded-2xl py-4 px-4 flex items-center gap-3 text-left"
             >
@@ -495,7 +499,10 @@ function Dashboard() {
           <div className="max-w-[55%]">
             <p className="text-[18px] font-bold leading-tight">Grow your wealth</p>
             <p className="text-[12px] text-white/75 mt-1">Invest in a better tomorrow</p>
-            <button className="mt-3 px-4 py-2 rounded-full bg-white text-black text-[12px] font-bold">
+            <button
+              onClick={() => navigate({ to: "/invest" })}
+              className="mt-3 px-4 py-2 rounded-full bg-white text-black text-[12px] font-bold"
+            >
               Invest Now
             </button>
           </div>
@@ -530,11 +537,12 @@ function Dashboard() {
             {[
               { i: <HomeIcon size={20} />, l: "Home", a: true },
               { i: <PieChart size={20} />, l: "Portfolio" },
-              { i: <LineIcon size={20} />, l: "Investments" },
-              { i: <User size={20} />, l: "Account" },
-            ].map((t) => (
+              { i: <LineIcon size={20} />, l: "Investments", onClick: () => navigate({ to: "/invest" }) },
+              { i: <User size={20} />, l: "Account", onClick: () => navigate({ to: "/account" }) },
+            ].map((t: any) => (
               <button
                 key={t.l}
+                onClick={t.onClick}
                 className={`flex flex-col items-center gap-0.5 ${
                   t.a ? "text-purple-300" : "text-white/50"
                 }`}
@@ -546,6 +554,7 @@ function Dashboard() {
             ))}
           </div>
         </nav>
+        <MoneeAssistant />
       </div>
     </div>
   );
