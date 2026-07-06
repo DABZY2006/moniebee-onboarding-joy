@@ -20,6 +20,7 @@ import { Route as PaymentRouteImport } from './routes/payment'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LoadingRouteImport } from './routes/loading'
+import { Route as InvestRouteImport } from './routes/invest'
 import { Route as GeneratingRouteImport } from './routes/generating'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ConfirmEmailRouteImport } from './routes/confirm-email'
@@ -81,6 +82,11 @@ const LoadingRoute = LoadingRouteImport.update({
   path: '/loading',
   getParentRoute: () => rootRouteImport,
 } as any)
+const InvestRoute = InvestRouteImport.update({
+  id: '/invest',
+  path: '/invest',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GeneratingRoute = GeneratingRouteImport.update({
   id: '/generating',
   path: '/generating',
@@ -113,6 +119,7 @@ export interface FileRoutesByFullPath {
   '/confirm-email': typeof ConfirmEmailRoute
   '/dashboard': typeof DashboardRoute
   '/generating': typeof GeneratingRoute
+  '/invest': typeof InvestRoute
   '/loading': typeof LoadingRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
@@ -131,6 +138,7 @@ export interface FileRoutesByTo {
   '/confirm-email': typeof ConfirmEmailRoute
   '/dashboard': typeof DashboardRoute
   '/generating': typeof GeneratingRoute
+  '/invest': typeof InvestRoute
   '/loading': typeof LoadingRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
@@ -150,6 +158,7 @@ export interface FileRoutesById {
   '/confirm-email': typeof ConfirmEmailRoute
   '/dashboard': typeof DashboardRoute
   '/generating': typeof GeneratingRoute
+  '/invest': typeof InvestRoute
   '/loading': typeof LoadingRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
@@ -170,6 +179,7 @@ export interface FileRouteTypes {
     | '/confirm-email'
     | '/dashboard'
     | '/generating'
+    | '/invest'
     | '/loading'
     | '/login'
     | '/notifications'
@@ -188,6 +198,7 @@ export interface FileRouteTypes {
     | '/confirm-email'
     | '/dashboard'
     | '/generating'
+    | '/invest'
     | '/loading'
     | '/login'
     | '/notifications'
@@ -206,6 +217,7 @@ export interface FileRouteTypes {
     | '/confirm-email'
     | '/dashboard'
     | '/generating'
+    | '/invest'
     | '/loading'
     | '/login'
     | '/notifications'
@@ -225,6 +237,7 @@ export interface RootRouteChildren {
   ConfirmEmailRoute: typeof ConfirmEmailRoute
   DashboardRoute: typeof DashboardRoute
   GeneratingRoute: typeof GeneratingRoute
+  InvestRoute: typeof InvestRoute
   LoadingRoute: typeof LoadingRoute
   LoginRoute: typeof LoginRoute
   NotificationsRoute: typeof NotificationsRoute
@@ -317,6 +330,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoadingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/invest': {
+      id: '/invest'
+      path: '/invest'
+      fullPath: '/invest'
+      preLoaderRoute: typeof InvestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/generating': {
       id: '/generating'
       path: '/generating'
@@ -361,6 +381,7 @@ const rootRouteChildren: RootRouteChildren = {
   ConfirmEmailRoute: ConfirmEmailRoute,
   DashboardRoute: DashboardRoute,
   GeneratingRoute: GeneratingRoute,
+  InvestRoute: InvestRoute,
   LoadingRoute: LoadingRoute,
   LoginRoute: LoginRoute,
   NotificationsRoute: NotificationsRoute,
