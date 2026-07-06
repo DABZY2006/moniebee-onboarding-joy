@@ -2,16 +2,26 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo } from "react";
 
 export const Route = createFileRoute("/generating")({
-  head: () => ({ meta: [{ title: "Generating Payment Account — Moniebee" }] }),
+  head: () => ({ meta: [{ title: "Please wait — Moniebee" }] }),
+  validateSearch: (s: Record<string, unknown>) => ({
+    next: typeof s.next === "string" ? s.next : "/payment",
+    ms:
+      typeof s.ms === "string"
+        ? parseInt(s.ms, 10) || 5000
+        : typeof s.ms === "number"
+          ? s.ms
+          : 5000,
+  }),
   component: GeneratingPage,
 });
 
 function GeneratingPage() {
   const navigate = useNavigate();
+  const { next, ms } = Route.useSearch();
   useEffect(() => {
-    const t = setTimeout(() => navigate({ to: "/payment" }), 5000);
+    const t = setTimeout(() => navigate({ to: next as any }), ms);
     return () => clearTimeout(t);
-  }, [navigate]);
+  }, [navigate, next, ms]);
 
   const particles = useMemo(
     () =>
