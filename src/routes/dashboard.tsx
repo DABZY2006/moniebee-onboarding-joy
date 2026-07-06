@@ -498,7 +498,10 @@ function Dashboard() {
           <div className="max-w-[55%]">
             <p className="text-[18px] font-bold leading-tight">Grow your wealth</p>
             <p className="text-[12px] text-white/75 mt-1">Invest in a better tomorrow</p>
-            <button className="mt-3 px-4 py-2 rounded-full bg-white text-black text-[12px] font-bold">
+            <button
+              onClick={() => navigate({ to: "/invest" })}
+              className="mt-3 px-4 py-2 rounded-full bg-white text-black text-[12px] font-bold"
+            >
               Invest Now
             </button>
           </div>
