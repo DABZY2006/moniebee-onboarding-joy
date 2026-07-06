@@ -536,11 +536,12 @@ function Dashboard() {
             {[
               { i: <HomeIcon size={20} />, l: "Home", a: true },
               { i: <PieChart size={20} />, l: "Portfolio" },
-              { i: <LineIcon size={20} />, l: "Investments" },
-              { i: <User size={20} />, l: "Account" },
-            ].map((t) => (
+              { i: <LineIcon size={20} />, l: "Investments", onClick: () => navigate({ to: "/invest" }) },
+              { i: <User size={20} />, l: "Account", onClick: () => navigate({ to: "/account" }) },
+            ].map((t: any) => (
               <button
                 key={t.l}
+                onClick={t.onClick}
                 className={`flex flex-col items-center gap-0.5 ${
                   t.a ? "text-purple-300" : "text-white/50"
                 }`}
@@ -552,6 +553,7 @@ function Dashboard() {
             ))}
           </div>
         </nav>
+        <MoneeAssistant />
       </div>
     </div>
   );
