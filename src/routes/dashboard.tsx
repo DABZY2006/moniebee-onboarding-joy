@@ -36,6 +36,7 @@ import {
   ArrowDownLeft,
   Sparkles,
 } from "lucide-react";
+import { MoneeAssistant } from "@/components/MoneeAssistant";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
