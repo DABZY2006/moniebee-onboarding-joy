@@ -92,7 +92,6 @@ function Dashboard() {
   }, [bellOpen]);
 
   useEffect(() => {
-    useEffect(() => {
   if (user?.uid) {
     setActiveUser(user.uid);
   } else {
