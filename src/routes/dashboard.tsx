@@ -92,19 +92,28 @@ function Dashboard() {
   }, [bellOpen]);
 
   useEffect(() => {
-    if (user?.uid) {
-      setActiveUser(user.uid);
-      setBal(isWalletInitialized() ? getBalance() : 100);
+    useEffect(() => {
+  if (user?.uid) {
+    setActiveUser(user.uid);
+  } else {
+    const uid = localStorage.getItem("moniebee_active_uid");
+    if (uid) {
+      setActiveUser(uid);
     }
-    if (user?.displayName) {
-      setName(user.displayName.split(" ")[0]);
-      return;
-    }
-    try {
-      const n = localStorage.getItem("moniebee_username");
-      if (n) setName(n);
-    } catch {}
-  }, [user]);
+  }
+
+  setBal(isWalletInitialized() ? getBalance() : 100);
+
+  if (user?.displayName) {
+    setName(user.displayName.split(" ")[0]);
+    return;
+  }
+
+  try {
+    const n = localStorage.getItem("moniebee_username");
+    if (n) setName(n);
+  } catch {}
+}, [user]);
 
 
   useEffect(() => {
