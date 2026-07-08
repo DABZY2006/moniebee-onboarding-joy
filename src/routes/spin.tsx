@@ -14,7 +14,7 @@ export const Route = createFileRoute("/spin")({
   component: SpinPage,
 });
 
-const REWARDS = [1000, 2500, 5000, 10000, 25000, 50000, "JACKPOT", "JACKPOT"] as const;
+const REWARDS = [100000, 50000, 250000, 130000, 180000, 200000, "JACKPOT", "10000"] as const;
 const SEG_ANGLE = 360 / REWARDS.length;
 const SPIN_KEY = "moniebee_last_spin_at";
 
