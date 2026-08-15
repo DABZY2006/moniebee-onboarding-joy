@@ -14,16 +14,240 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      admin_audit_log: {
+        Row: {
+          action: string
+          admin_id: string
+          created_at: string
+          id: string
+          new_value: Json | null
+          previous_value: Json | null
+          target_id: string | null
+          target_table: string | null
+        }
+        Insert: {
+          action: string
+          admin_id: string
+          created_at?: string
+          id?: string
+          new_value?: Json | null
+          previous_value?: Json | null
+          target_id?: string | null
+          target_table?: string | null
+        }
+        Update: {
+          action?: string
+          admin_id?: string
+          created_at?: string
+          id?: string
+          new_value?: Json | null
+          previous_value?: Json | null
+          target_id?: string | null
+          target_table?: string | null
+        }
+        Relationships: []
+      }
+      app_settings: {
+        Row: {
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value?: Json
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: Json
+        }
+        Relationships: []
+      }
+      app_users: {
+        Row: {
+          ban_reason: string | null
+          created_at: string
+          email: string | null
+          external_uid: string
+          full_name: string | null
+          id: string
+          last_active_at: string
+          phone: string | null
+          referral_code: string | null
+          status: string
+          updated_at: string
+          upgraded: boolean
+        }
+        Insert: {
+          ban_reason?: string | null
+          created_at?: string
+          email?: string | null
+          external_uid: string
+          full_name?: string | null
+          id?: string
+          last_active_at?: string
+          phone?: string | null
+          referral_code?: string | null
+          status?: string
+          updated_at?: string
+          upgraded?: boolean
+        }
+        Update: {
+          ban_reason?: string | null
+          created_at?: string
+          email?: string | null
+          external_uid?: string
+          full_name?: string | null
+          id?: string
+          last_active_at?: string
+          phone?: string | null
+          referral_code?: string | null
+          status?: string
+          updated_at?: string
+          upgraded?: boolean
+        }
+        Relationships: []
+      }
+      payments: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string
+          external_uid: string
+          id: string
+          kind: string
+          proof_path: string | null
+          review_note: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          updated_at: string
+          user_email: string | null
+          user_name: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          currency?: string
+          external_uid: string
+          id?: string
+          kind?: string
+          proof_path?: string | null
+          review_note?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          user_email?: string | null
+          user_name?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          external_uid?: string
+          id?: string
+          kind?: string
+          proof_path?: string | null
+          review_note?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          user_email?: string | null
+          user_name?: string | null
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      withdrawals: {
+        Row: {
+          account_name: string | null
+          amount: number
+          created_at: string
+          destination: string | null
+          external_uid: string
+          id: string
+          method: string
+          review_note: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          updated_at: string
+          user_email: string | null
+          user_name: string | null
+        }
+        Insert: {
+          account_name?: string | null
+          amount: number
+          created_at?: string
+          destination?: string | null
+          external_uid: string
+          id?: string
+          method: string
+          review_note?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          user_email?: string | null
+          user_name?: string | null
+        }
+        Update: {
+          account_name?: string | null
+          amount?: number
+          created_at?: string
+          destination?: string | null
+          external_uid?: string
+          id?: string
+          method?: string
+          review_note?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          user_email?: string | null
+          user_name?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "moderator" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +374,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "moderator", "user"],
+    },
   },
 } as const
