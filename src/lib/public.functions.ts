@@ -54,9 +54,12 @@ export const getAccountStatus = createServerFn({ method: "POST" })
 export const getPublicSettings = createServerFn({ method: "GET" }).handler(async () => {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data } = await supabaseAdmin.from("app_settings").select("key, value");
-  const out: Record<string, Record<string, unknown>> = {};
-  for (const row of data ?? []) out[row.key] = (row.value ?? {}) as Record<string, unknown>;
-  return out;
+  return {
+    settings: (data ?? []).map((row) => ({
+      key: row.key,
+      value: JSON.stringify(row.value ?? {}),
+    })),
+  };
 });
 
 /** Stores a payment submission plus its proof screenshot in private storage. */
