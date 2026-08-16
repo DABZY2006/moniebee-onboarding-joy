@@ -24,10 +24,12 @@ function AdminLoginPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    void ensureAdminAccount().catch(() => {});
     supabase.auth.getSession().then(({ data }) => {
       if (data.session) navigate({ to: "/admin/dashboard" });
     });
   }, [navigate]);
+
 
   const particles = useMemo(
     () =>
