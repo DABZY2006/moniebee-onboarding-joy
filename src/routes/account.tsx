@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import {
   Bell, Camera, ShieldCheck, User as UserIcon, Lock, Ticket, BadgeCheck, Building2,
   Receipt, Users, BellRing, Headphones, LogOut, ChevronRight, Copy, Check,
-  Home as HomeIcon, PieChart, LineChart as LineIcon,
+  Home as HomeIcon, PieChart, LineChart as LineIcon, Shield,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { auth, signOut } from "@/lib/firebase";
@@ -292,16 +292,28 @@ function AccountPage() {
           <div className="glass rounded-2xl p-6 max-w-xs w-full text-center" style={{ boxShadow: "0 0 40px rgba(168,85,247,.5)" }}>
             <div className="text-[16px] font-bold mb-1">Log out?</div>
             <p className="text-[12px] text-white/60 mb-5">Are you sure you want to log out?</p>
-            <div className="flex gap-2">
-              <button
-                onClick={() => setLogoutOpen(false)}
-                className="flex-1 py-3 rounded-xl text-[13px] font-semibold bg-white/10"
-              >
-                Cancel
-              </button>
+            <div className="flex flex-col gap-2.5">
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setLogoutOpen(false)}
+                  className="flex-1 py-3 rounded-xl text-[13px] font-semibold bg-white/10"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => { setLogoutOpen(false); navigate({ to: "/admin/login" }); }}
+                  className="flex-1 py-3 rounded-xl text-[13px] font-bold flex items-center justify-center gap-1.5"
+                  style={{
+                    background: "linear-gradient(135deg,#8B5CF6,#4C1D95)",
+                    boxShadow: "0 0 18px rgba(139,92,246,.55)",
+                  }}
+                >
+                  <Shield size={14} /> Admin
+                </button>
+              </div>
               <button
                 onClick={doLogout}
-                className="flex-1 py-3 rounded-xl text-[13px] font-bold"
+                className="w-full py-3 rounded-xl text-[13px] font-bold"
                 style={{ background: "linear-gradient(135deg,#ef4444,#b91c1c)" }}
               >
                 Logout
