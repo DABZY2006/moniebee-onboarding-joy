@@ -2,6 +2,8 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Eye, EyeOff, Mail, Lock, Loader2, ShieldCheck, ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { ensureAdminAccount } from "@/lib/admin.functions";
+
 
 export const Route = createFileRoute("/admin/login")({
   head: () => ({
