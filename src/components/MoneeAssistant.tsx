@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Bot, X } from "lucide-react";
+import { Bot, ShieldCheck, X } from "lucide-react";
 
 /**
  * Floating premium AI assistant bubble.
