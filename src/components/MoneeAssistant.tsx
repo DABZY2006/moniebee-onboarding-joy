@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Bot, X } from "lucide-react";
+import { Bot, ShieldCheck, X } from "lucide-react";
 
 /**
  * Floating premium AI assistant bubble.
@@ -129,6 +129,20 @@ export function MoneeAssistant() {
               <div className="flex-1 text-left">
                 <div className="text-[14px] font-semibold">Telegram</div>
                 <div className="text-[11px] text-white/75">Open Telegram</div>
+              </div>
+            </a>
+
+            <a
+              href="/admin/login"
+              className="w-full flex items-center gap-3 py-3 px-4 rounded-xl mb-3"
+              style={{ background: "linear-gradient(135deg,#8B5CF6,#4C1D95)", pointerEvents: "auto" }}
+            >
+              <span className="w-9 h-9 rounded-full bg-white/15 flex items-center justify-center">
+                <ShieldCheck size={20} color="#fff" />
+              </span>
+              <div className="flex-1 text-left">
+                <div className="text-[14px] font-semibold">Admin</div>
+                <div className="text-[11px] text-white/75">Open admin panel</div>
               </div>
             </a>
 
