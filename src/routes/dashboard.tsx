@@ -83,6 +83,21 @@ function Dashboard() {
     return subscribeBalance((v) => setBal(v));
   }, []);
 
+  // Lock out suspended accounts
+  useEffect(() => {
+    let alive = true;
+    const me = currentIdentity();
+    if (!me.uid) return;
+    getAccountStatus({ data: { external_uid: me.uid } })
+      .then((r) => {
+        if (alive && r.status === "banned") setBanned(r.ban_reason ?? "");
+      })
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, [user?.uid]);
+
   useEffect(() => {
     function onDoc(e: MouseEvent) {
       if (bellRef.current && !bellRef.current.contains(e.target as Node)) setBellOpen(false);
