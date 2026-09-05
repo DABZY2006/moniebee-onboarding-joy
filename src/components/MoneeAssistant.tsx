@@ -30,6 +30,22 @@ export function MoneeAssistant() {
     } catch {}
   }, [pos]);
 
+  useEffect(() => {
+    let alive = true;
+    loadSettings()
+      .then(({ support }) => {
+        if (!alive || !support) return;
+        setLinks({
+          telegram: support.telegram?.trim() || FALLBACK_TELEGRAM,
+          whatsapp: support.whatsapp?.trim() || FALLBACK_WHATSAPP,
+        });
+      })
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, []);
+
   const onPointerDown = (e: React.PointerEvent) => {
     (e.target as Element).setPointerCapture?.(e.pointerId);
     startRef.current = { x: e.clientX, y: e.clientY, px: pos.x, py: pos.y, moved: false };
