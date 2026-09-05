@@ -239,6 +239,32 @@ function PaymentPage() {
           </div>
         </div>
 
+        {/* Proof upload */}
+        <div className="glass rounded-2xl p-4 mb-5">
+          <div className="text-[11px] font-semibold text-purple-300 tracking-wider mb-2">
+            UPLOAD PAYMENT PROOF
+          </div>
+          <input
+            ref={fileRef}
+            type="file"
+            accept="image/png,image/jpeg,image/webp"
+            className="hidden"
+            onChange={(e) => setProof(e.target.files?.[0] ?? null)}
+          />
+          <button
+            onClick={() => fileRef.current?.click()}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-purple-500/15 border border-purple-400/40 text-left"
+          >
+            <Upload size={18} className="text-purple-200" />
+            <span className="text-[12.5px] truncate">
+              {proof ? proof.name : "Choose your transfer screenshot"}
+            </span>
+          </button>
+          <p className="text-[11px] text-white/50 mt-2">
+            PNG, JPG or WEBP — up to 5MB. Required for verification.
+          </p>
+        </div>
+
         <button
           onClick={handlePaid}
           disabled={verifying}
