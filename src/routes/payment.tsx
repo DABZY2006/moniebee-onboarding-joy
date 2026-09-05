@@ -1,14 +1,25 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { ArrowLeft, Wallet, Copy, Check, ShieldCheck, Loader2 } from "lucide-react";
+import { ArrowLeft, Wallet, Copy, Check, ShieldCheck, Loader2, Upload } from "lucide-react";
+import { currentIdentity, loadSettings } from "@/lib/app-sync";
+import { submitPayment } from "@/lib/public.functions";
 
 export const Route = createFileRoute("/payment")({
-  head: () => ({ meta: [{ title: "Payment — Moniebee" }] }),
+  head: () => ({
+    meta: [
+      { title: "Payment — Moniebee" },
+      { name: "description", content: "Transfer to activate your Moniebee account and upload your payment proof." },
+      { property: "og:title", content: "Payment — Moniebee" },
+      { property: "og:description", content: "Complete your Moniebee upgrade payment securely." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: PaymentPage,
 });
 
-const ACCOUNT = {
+const DEFAULT_ACCOUNT = {
   bank: "OPAY",
   number: "8166227350",
   name: "USMAN-NURUDEEN-USMAN",
@@ -19,11 +30,34 @@ function PaymentPage() {
   const [verifying, setVerifying] = useState(false);
   const [success, setSuccess] = useState(false);
   const [copied, setCopied] = useState<"num" | "name" | null>(null);
+  const [ACCOUNT, setAccount] = useState(DEFAULT_ACCOUNT);
+  const [settingsAmount, setSettingsAmount] = useState<number | null>(null);
+  const [proof, setProof] = useState<File | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   let upgrade: { name?: string; price?: number } = {};
   try {
     upgrade = JSON.parse(localStorage.getItem("moniebee_upgrade") ?? "{}");
   } catch {}
+
+  useEffect(() => {
+    let alive = true;
+    loadSettings()
+      .then(({ bank }) => {
+        if (!alive || !bank) return;
+        setAccount({
+          bank: bank.bank_name?.trim() || DEFAULT_ACCOUNT.bank,
+          number: bank.account_number?.trim() || DEFAULT_ACCOUNT.number,
+          name: bank.account_name?.trim() || DEFAULT_ACCOUNT.name,
+        });
+        if (typeof bank.amount === "number" && bank.amount > 0) setSettingsAmount(bank.amount);
+      })
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, []);
+
 
   const copy = async (v: string, k: "num" | "name") => {
     try {
