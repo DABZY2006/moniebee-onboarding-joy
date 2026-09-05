@@ -1,5 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
+import { currentIdentity } from "@/lib/app-sync";
+import { registerAppUser } from "@/lib/public.functions";
 
 export const Route = createFileRoute("/personalize")({
   head: () => ({
@@ -14,6 +16,8 @@ export const Route = createFileRoute("/personalize")({
 function PersonalizePage() {
   const navigate = useNavigate();
   let username = "";
+  let phone = "";
+  let referral = "";
 
   return (
     <div className="flex min-h-screen justify-center items-start bg-black">
@@ -71,6 +75,8 @@ function PersonalizePage() {
                 placeholder={ph}
                 onChange={(e) => {
                   if (ph === "Create user name") username = e.target.value;
+                  else if (ph === "Phone number") phone = e.target.value;
+                  else referral = e.target.value;
                 }}
                 className="w-full bg-transparent outline-none px-5 py-4 text-[15px] text-white placeholder:text-white/40"
               />
@@ -83,7 +89,22 @@ function PersonalizePage() {
 
         <button
           onClick={() => {
-            try { localStorage.setItem("moniebee_username", username.trim() || "Alex"); } catch {}
+            const name = username.trim() || "Alex";
+            try {
+              localStorage.setItem("moniebee_username", name);
+              if (phone.trim()) localStorage.setItem("moniebee_phone", phone.trim());
+              if (referral.trim()) localStorage.setItem("moniebee_referral", referral.trim());
+            } catch {}
+            const me = currentIdentity();
+            registerAppUser({
+              data: {
+                external_uid: me.uid,
+                full_name: name,
+                ...(me.email ? { email: me.email } : {}),
+                ...(phone.trim() ? { phone: phone.trim() } : {}),
+                ...(referral.trim() ? { referral_code: referral.trim() } : {}),
+              },
+            }).catch(() => {});
             navigate({ to: "/loading" });
           }}
 

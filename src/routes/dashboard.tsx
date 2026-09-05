@@ -37,6 +37,8 @@ import {
   Sparkles,
 } from "lucide-react";
 import { MoneeAssistant } from "@/components/MoneeAssistant";
+import { currentIdentity } from "@/lib/app-sync";
+import { getAccountStatus } from "@/lib/public.functions";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
@@ -57,6 +59,7 @@ function Dashboard() {
   const [bellOpen, setBellOpen] = useState(false);
   const [txs, setTxs] = useState<Tx[]>([]);
   const [unread, setUnread] = useState(0);
+  const [banned, setBanned] = useState<string | null>(null);
   const cameraRef = useRef<HTMLInputElement>(null);
   const bellRef = useRef<HTMLDivElement>(null);
 
@@ -82,6 +85,21 @@ function Dashboard() {
   useEffect(() => {
     return subscribeBalance((v) => setBal(v));
   }, []);
+
+  // Lock out suspended accounts
+  useEffect(() => {
+    let alive = true;
+    const me = currentIdentity();
+    if (!me.uid) return;
+    getAccountStatus({ data: { external_uid: me.uid } })
+      .then((r) => {
+        if (alive && r.status === "banned") setBanned(r.ban_reason ?? "");
+      })
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, [user?.uid]);
 
   useEffect(() => {
     function onDoc(e: MouseEvent) {
@@ -150,6 +168,27 @@ function Dashboard() {
 
   const ngn = bal.toLocaleString("en-NG", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const usd = (bal / RATE).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  if (banned !== null) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center px-6">
+        <div className="max-w-sm w-full text-center rounded-2xl p-7 border border-red-500/30 bg-red-500/10">
+          <h1 className="text-[20px] font-bold mb-2">Account suspended</h1>
+          <p className="text-[13px] text-white/70">
+            {banned.trim() || "Your account has been suspended. Please contact support for help."}
+          </p>
+          <a
+            href="https://t.me/Matthewxx8230"
+            target="_blank"
+            rel="noreferrer noopener"
+            className="mt-5 inline-block px-5 py-3 rounded-xl bg-white text-black text-[14px] font-bold"
+          >
+            Contact support
+          </a>
+        </div>
+      </div>
+    );
+  }
 
   return (
 

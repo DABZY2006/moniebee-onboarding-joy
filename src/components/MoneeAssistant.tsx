@@ -1,5 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { Bot, ShieldCheck, X } from "lucide-react";
+import { loadSettings } from "@/lib/app-sync";
+
+const FALLBACK_TELEGRAM = "https://t.me/Matthewxx8230";
+const FALLBACK_WHATSAPP = "https://wa.me/message/FOGLJUPV7MXJH1";
 
 /**
  * Floating premium AI assistant bubble.
@@ -16,6 +20,7 @@ export function MoneeAssistant() {
     return { x: 20, y: 140 };
   });
   const [open, setOpen] = useState(false);
+  const [links, setLinks] = useState({ telegram: FALLBACK_TELEGRAM, whatsapp: FALLBACK_WHATSAPP });
   const [dragging, setDragging] = useState(false);
   const startRef = useRef<{ x: number; y: number; px: number; py: number; moved: boolean } | null>(null);
 
@@ -24,6 +29,22 @@ export function MoneeAssistant() {
       localStorage.setItem("moniebee_bubble_pos", JSON.stringify(pos));
     } catch {}
   }, [pos]);
+
+  useEffect(() => {
+    let alive = true;
+    loadSettings()
+      .then(({ support }) => {
+        if (!alive || !support) return;
+        setLinks({
+          telegram: support.telegram?.trim() || FALLBACK_TELEGRAM,
+          whatsapp: support.whatsapp?.trim() || FALLBACK_WHATSAPP,
+        });
+      })
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   const onPointerDown = (e: React.PointerEvent) => {
     (e.target as Element).setPointerCapture?.(e.pointerId);
@@ -117,7 +138,7 @@ export function MoneeAssistant() {
             <p className="text-[12px] text-white/60 mb-5">Choose your preferred support platform.</p>
 
             <a
-              href="https://t.me/Matthewxx8230"
+              href={links.telegram}
               target="_blank"
               rel="noreferrer noopener"
               className="w-full flex items-center gap-3 py-3 px-4 rounded-xl mb-3"
@@ -147,7 +168,7 @@ export function MoneeAssistant() {
             </a>
 
             <a
-              href="https://wa.me/message/FOGLJUPV7MXJH1"
+              href={links.whatsapp}
               target="_blank"
               rel="noreferrer noopener"
               className="w-full flex items-center gap-3 py-3 px-4 rounded-xl"

@@ -21,6 +21,8 @@ import {
   formatNaira,
   MONEE_CODE,
 } from "@/lib/transactions";
+import { currentIdentity } from "@/lib/app-sync";
+import { submitWithdrawal } from "@/lib/public.functions";
 
 export const Route = createFileRoute("/withdraw")({
   head: () => ({ meta: [{ title: "Withdraw — Moniebee" }] }),
@@ -144,6 +146,20 @@ function WithdrawPage() {
       method === "bank"
         ? `${bank} • ${acct}`
         : METHODS.find((m) => m.id === method)?.label ?? "";
+    const me = currentIdentity();
+    try {
+      await submitWithdrawal({
+        data: {
+          external_uid: me.uid,
+          user_name: me.name,
+          ...(me.email ? { user_email: me.email } : {}),
+          amount: amt,
+          method: METHODS.find((m) => m.id === method)?.label ?? method,
+          destination: dest,
+          ...(acctName.trim() ? { account_name: acctName.trim() } : {}),
+        },
+      });
+    } catch {}
     const res = debitWallet(
       amt,
       `Withdrawal — ${METHODS.find((m) => m.id === method)?.label}`,

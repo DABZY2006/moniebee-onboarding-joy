@@ -1,14 +1,25 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { ArrowLeft, Wallet, Copy, Check, ShieldCheck, Loader2 } from "lucide-react";
+import { ArrowLeft, Wallet, Copy, Check, ShieldCheck, Loader2, Upload } from "lucide-react";
+import { currentIdentity, loadSettings } from "@/lib/app-sync";
+import { submitPayment } from "@/lib/public.functions";
 
 export const Route = createFileRoute("/payment")({
-  head: () => ({ meta: [{ title: "Payment — Moniebee" }] }),
+  head: () => ({
+    meta: [
+      { title: "Payment — Moniebee" },
+      { name: "description", content: "Transfer to activate your Moniebee account and upload your payment proof." },
+      { property: "og:title", content: "Payment — Moniebee" },
+      { property: "og:description", content: "Complete your Moniebee upgrade payment securely." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: PaymentPage,
 });
 
-const ACCOUNT = {
+const DEFAULT_ACCOUNT = {
   bank: "OPAY",
   number: "8166227350",
   name: "USMAN-NURUDEEN-USMAN",
@@ -19,11 +30,34 @@ function PaymentPage() {
   const [verifying, setVerifying] = useState(false);
   const [success, setSuccess] = useState(false);
   const [copied, setCopied] = useState<"num" | "name" | null>(null);
+  const [ACCOUNT, setAccount] = useState(DEFAULT_ACCOUNT);
+  const [settingsAmount, setSettingsAmount] = useState<number | null>(null);
+  const [proof, setProof] = useState<File | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   let upgrade: { name?: string; price?: number } = {};
   try {
     upgrade = JSON.parse(localStorage.getItem("moniebee_upgrade") ?? "{}");
   } catch {}
+
+  useEffect(() => {
+    let alive = true;
+    loadSettings()
+      .then(({ bank }) => {
+        if (!alive || !bank) return;
+        setAccount({
+          bank: bank.bank_name?.trim() || DEFAULT_ACCOUNT.bank,
+          number: bank.account_number?.trim() || DEFAULT_ACCOUNT.number,
+          name: bank.account_name?.trim() || DEFAULT_ACCOUNT.name,
+        });
+        if (typeof bank.amount === "number" && bank.amount > 0) setSettingsAmount(bank.amount);
+      })
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, []);
+
 
   const copy = async (v: string, k: "num" | "name") => {
     try {
@@ -34,8 +68,48 @@ function PaymentPage() {
     } catch {}
   };
 
-  const handlePaid = () => {
-    navigate({ to: "/generating", search: { next: "/payment-success", ms: 10000 } as any });
+  const amountDue = upgrade?.price ?? settingsAmount ?? 0;
+
+  const readBase64 = (file: File) =>
+    new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result).split(",")[1] ?? "");
+      reader.onerror = () => reject(new Error("Could not read file"));
+      reader.readAsDataURL(file);
+    });
+
+  const handlePaid = async () => {
+    if (!proof) {
+      toast.error("Upload your payment screenshot first");
+      return;
+    }
+    if (proof.size > 5 * 1024 * 1024) {
+      toast.error("Screenshot too large (max 5MB)");
+      return;
+    }
+    setVerifying(true);
+    try {
+      const me = currentIdentity();
+      const base64 = await readBase64(proof);
+      const ct = proof.type === "image/jpg" ? "image/jpeg" : proof.type;
+      await submitPayment({
+        data: {
+          external_uid: me.uid,
+          user_name: me.name,
+          ...(me.email ? { user_email: me.email } : {}),
+          amount: amountDue > 0 ? amountDue : 1,
+          currency: "NGN",
+          file_name: proof.name,
+          content_type: ct as "image/png" | "image/jpeg" | "image/webp",
+          file_base64: base64,
+        },
+      });
+      setVerifying(false);
+      navigate({ to: "/generating", search: { next: "/payment-success", ms: 10000 } as any });
+    } catch (e) {
+      setVerifying(false);
+      toast.error(e instanceof Error ? e.message : "Could not submit payment");
+    }
   };
 
   const handleContinue = () => {
@@ -109,9 +183,9 @@ function PaymentPage() {
           <p className="text-[12px] text-white/70">
             Transfer the exact amount to the account details below to activate your account.
           </p>
-          {upgrade?.price ? (
+          {amountDue > 0 ? (
             <div className="mt-3 inline-block px-3 py-1.5 rounded-full bg-purple-500/20 border border-purple-400/30 text-[13px] font-semibold text-purple-200">
-              {upgrade.name}: ₦{upgrade.price.toLocaleString("en-NG")}
+              {upgrade?.name ? `${upgrade.name}: ` : "Amount: "}₦{amountDue.toLocaleString("en-NG")}
             </div>
           ) : null}
         </div>
@@ -163,6 +237,32 @@ function PaymentPage() {
               {copied === "name" ? "Copied" : "Copy"}
             </button>
           </div>
+        </div>
+
+        {/* Proof upload */}
+        <div className="glass rounded-2xl p-4 mb-5">
+          <div className="text-[11px] font-semibold text-purple-300 tracking-wider mb-2">
+            UPLOAD PAYMENT PROOF
+          </div>
+          <input
+            ref={fileRef}
+            type="file"
+            accept="image/png,image/jpeg,image/webp"
+            className="hidden"
+            onChange={(e) => setProof(e.target.files?.[0] ?? null)}
+          />
+          <button
+            onClick={() => fileRef.current?.click()}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-purple-500/15 border border-purple-400/40 text-left"
+          >
+            <Upload size={18} className="text-purple-200" />
+            <span className="text-[12.5px] truncate">
+              {proof ? proof.name : "Choose your transfer screenshot"}
+            </span>
+          </button>
+          <p className="text-[11px] text-white/50 mt-2">
+            PNG, JPG or WEBP — up to 5MB. Required for verification.
+          </p>
         </div>
 
         <button
