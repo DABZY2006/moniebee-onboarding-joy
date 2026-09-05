@@ -169,6 +169,27 @@ function Dashboard() {
   const ngn = bal.toLocaleString("en-NG", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const usd = (bal / RATE).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
+  if (banned !== null) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center px-6">
+        <div className="max-w-sm w-full text-center rounded-2xl p-7 border border-red-500/30 bg-red-500/10">
+          <h1 className="text-[20px] font-bold mb-2">Account suspended</h1>
+          <p className="text-[13px] text-white/70">
+            {banned.trim() || "Your account has been suspended. Please contact support for help."}
+          </p>
+          <a
+            href="https://t.me/Matthewxx8230"
+            target="_blank"
+            rel="noreferrer noopener"
+            className="mt-5 inline-block px-5 py-3 rounded-xl bg-white text-black text-[14px] font-bold"
+          >
+            Contact support
+          </a>
+        </div>
+      </div>
+    );
+  }
+
   return (
 
     <div className="flex min-h-screen justify-center items-start bg-black">
