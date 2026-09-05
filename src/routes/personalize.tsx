@@ -1,5 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
+import { currentIdentity } from "@/lib/app-sync";
+import { registerAppUser } from "@/lib/public.functions";
 
 export const Route = createFileRoute("/personalize")({
   head: () => ({
