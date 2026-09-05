@@ -37,6 +37,8 @@ import {
   Sparkles,
 } from "lucide-react";
 import { MoneeAssistant } from "@/components/MoneeAssistant";
+import { currentIdentity } from "@/lib/app-sync";
+import { getAccountStatus } from "@/lib/public.functions";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
@@ -57,6 +59,7 @@ function Dashboard() {
   const [bellOpen, setBellOpen] = useState(false);
   const [txs, setTxs] = useState<Tx[]>([]);
   const [unread, setUnread] = useState(0);
+  const [banned, setBanned] = useState<string | null>(null);
   const cameraRef = useRef<HTMLInputElement>(null);
   const bellRef = useRef<HTMLDivElement>(null);
 
