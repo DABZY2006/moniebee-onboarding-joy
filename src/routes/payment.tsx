@@ -68,8 +68,48 @@ function PaymentPage() {
     } catch {}
   };
 
-  const handlePaid = () => {
-    navigate({ to: "/generating", search: { next: "/payment-success", ms: 10000 } as any });
+  const amountDue = upgrade?.price ?? settingsAmount ?? 0;
+
+  const readBase64 = (file: File) =>
+    new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result).split(",")[1] ?? "");
+      reader.onerror = () => reject(new Error("Could not read file"));
+      reader.readAsDataURL(file);
+    });
+
+  const handlePaid = async () => {
+    if (!proof) {
+      toast.error("Upload your payment screenshot first");
+      return;
+    }
+    if (proof.size > 5 * 1024 * 1024) {
+      toast.error("Screenshot too large (max 5MB)");
+      return;
+    }
+    setVerifying(true);
+    try {
+      const me = currentIdentity();
+      const base64 = await readBase64(proof);
+      const ct = proof.type === "image/jpg" ? "image/jpeg" : proof.type;
+      await submitPayment({
+        data: {
+          external_uid: me.uid,
+          user_name: me.name,
+          ...(me.email ? { user_email: me.email } : {}),
+          amount: amountDue > 0 ? amountDue : 1,
+          currency: "NGN",
+          file_name: proof.name,
+          content_type: ct as "image/png" | "image/jpeg" | "image/webp",
+          file_base64: base64,
+        },
+      });
+      setVerifying(false);
+      navigate({ to: "/generating", search: { next: "/payment-success", ms: 10000 } as any });
+    } catch (e) {
+      setVerifying(false);
+      toast.error(e instanceof Error ? e.message : "Could not submit payment");
+    }
   };
 
   const handleContinue = () => {
