@@ -20,6 +20,7 @@ export function MoneeAssistant() {
     return { x: 20, y: 140 };
   });
   const [open, setOpen] = useState(false);
+  const [links, setLinks] = useState({ telegram: FALLBACK_TELEGRAM, whatsapp: FALLBACK_WHATSAPP });
   const [dragging, setDragging] = useState(false);
   const startRef = useRef<{ x: number; y: number; px: number; py: number; moved: boolean } | null>(null);
 
