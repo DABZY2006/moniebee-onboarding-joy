@@ -75,6 +75,8 @@ function PersonalizePage() {
                 placeholder={ph}
                 onChange={(e) => {
                   if (ph === "Create user name") username = e.target.value;
+                  else if (ph === "Phone number") phone = e.target.value;
+                  else referral = e.target.value;
                 }}
                 className="w-full bg-transparent outline-none px-5 py-4 text-[15px] text-white placeholder:text-white/40"
               />
