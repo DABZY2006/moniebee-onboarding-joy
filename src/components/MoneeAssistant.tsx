@@ -1,5 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { Bot, ShieldCheck, X } from "lucide-react";
+import { loadSettings } from "@/lib/app-sync";
+
+const FALLBACK_TELEGRAM = "https://t.me/Matthewxx8230";
+const FALLBACK_WHATSAPP = "https://wa.me/message/FOGLJUPV7MXJH1";
 
 /**
  * Floating premium AI assistant bubble.
