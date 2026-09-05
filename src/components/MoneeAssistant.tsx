@@ -138,7 +138,7 @@ export function MoneeAssistant() {
             <p className="text-[12px] text-white/60 mb-5">Choose your preferred support platform.</p>
 
             <a
-              href="https://t.me/Matthewxx8230"
+              href={links.telegram}
               target="_blank"
               rel="noreferrer noopener"
               className="w-full flex items-center gap-3 py-3 px-4 rounded-xl mb-3"
@@ -168,7 +168,7 @@ export function MoneeAssistant() {
             </a>
 
             <a
-              href="https://wa.me/message/FOGLJUPV7MXJH1"
+              href={links.whatsapp}
               target="_blank"
               rel="noreferrer noopener"
               className="w-full flex items-center gap-3 py-3 px-4 rounded-xl"
