@@ -89,7 +89,22 @@ function PersonalizePage() {
 
         <button
           onClick={() => {
-            try { localStorage.setItem("moniebee_username", username.trim() || "Alex"); } catch {}
+            const name = username.trim() || "Alex";
+            try {
+              localStorage.setItem("moniebee_username", name);
+              if (phone.trim()) localStorage.setItem("moniebee_phone", phone.trim());
+              if (referral.trim()) localStorage.setItem("moniebee_referral", referral.trim());
+            } catch {}
+            const me = currentIdentity();
+            registerAppUser({
+              data: {
+                external_uid: me.uid,
+                full_name: name,
+                ...(me.email ? { email: me.email } : {}),
+                ...(phone.trim() ? { phone: phone.trim() } : {}),
+                ...(referral.trim() ? { referral_code: referral.trim() } : {}),
+              },
+            }).catch(() => {});
             navigate({ to: "/loading" });
           }}
 
