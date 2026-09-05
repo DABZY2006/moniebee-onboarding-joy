@@ -16,6 +16,8 @@ export const Route = createFileRoute("/personalize")({
 function PersonalizePage() {
   const navigate = useNavigate();
   let username = "";
+  let phone = "";
+  let referral = "";
 
   return (
     <div className="flex min-h-screen justify-center items-start bg-black">
