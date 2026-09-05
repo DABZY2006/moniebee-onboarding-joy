@@ -183,9 +183,9 @@ function PaymentPage() {
           <p className="text-[12px] text-white/70">
             Transfer the exact amount to the account details below to activate your account.
           </p>
-          {upgrade?.price ? (
+          {amountDue > 0 ? (
             <div className="mt-3 inline-block px-3 py-1.5 rounded-full bg-purple-500/20 border border-purple-400/30 text-[13px] font-semibold text-purple-200">
-              {upgrade.name}: ₦{upgrade.price.toLocaleString("en-NG")}
+              {upgrade?.name ? `${upgrade.name}: ` : "Amount: "}₦{amountDue.toLocaleString("en-NG")}
             </div>
           ) : null}
         </div>
