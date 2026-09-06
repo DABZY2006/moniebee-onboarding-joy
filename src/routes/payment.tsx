@@ -33,7 +33,17 @@ function PaymentPage() {
   const [ACCOUNT, setAccount] = useState(DEFAULT_ACCOUNT);
   const [settingsAmount, setSettingsAmount] = useState<number | null>(null);
   const [proof, setProof] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [dragging, setDragging] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  const pickFile = (file: File | null) => {
+    setPreviewUrl((old) => {
+      if (old) URL.revokeObjectURL(old);
+      return file && file.type.startsWith("image/") ? URL.createObjectURL(file) : null;
+    });
+    setProof(file);
+  };
 
   let upgrade: { name?: string; price?: number } = {};
   try {
