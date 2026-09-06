@@ -90,19 +90,27 @@ function PaymentPage() {
 
   const handlePaid = async () => {
     if (!proof) {
-      toast.error("Upload your payment screenshot first");
+      toast.error("Upload your payment receipt first");
       return;
     }
     if (proof.size > 5 * 1024 * 1024) {
-      toast.error("Screenshot too large (max 5MB)");
+      toast.error("Receipt too large (max 5MB)");
+      return;
+    }
+    const ct = (proof.type === "image/jpg" ? "image/jpeg" : proof.type) as
+      | "image/png"
+      | "image/jpeg"
+      | "image/webp"
+      | "application/pdf";
+    if (!["image/png", "image/jpeg", "image/webp", "application/pdf"].includes(ct)) {
+      toast.error("Use a PNG, JPG, JPEG or PDF receipt");
       return;
     }
     setVerifying(true);
     try {
       const me = currentIdentity();
       const base64 = await readBase64(proof);
-      const ct = proof.type === "image/jpg" ? "image/jpeg" : proof.type;
-      await submitPayment({
+      const { reference } = await submitPayment({
         data: {
           external_uid: me.uid,
           user_name: me.name,
@@ -110,17 +118,21 @@ function PaymentPage() {
           amount: amountDue > 0 ? amountDue : 1,
           currency: "NGN",
           file_name: proof.name,
-          content_type: ct as "image/png" | "image/jpeg" | "image/webp",
+          content_type: ct,
           file_base64: base64,
         },
       });
+      try {
+        localStorage.setItem("moniebee_payment_ref", reference);
+      } catch {}
       setVerifying(false);
-      navigate({ to: "/generating", search: { next: "/payment-success", ms: 10000 } as any });
+      navigate({ to: "/payment-review", search: { ref: reference } });
     } catch (e) {
       setVerifying(false);
       toast.error(e instanceof Error ? e.message : "Could not submit payment");
     }
   };
+
 
   const handleContinue = () => {
     toast.success("Welcome to MONEEBEE 🎉", {
