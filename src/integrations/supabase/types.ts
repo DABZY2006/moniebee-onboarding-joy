@@ -118,7 +118,10 @@ export type Database = {
           external_uid: string
           id: string
           kind: string
+          moneebee_code: string | null
           proof_path: string | null
+          receipt_type: string | null
+          reference: string | null
           review_note: string | null
           reviewed_at: string | null
           reviewed_by: string | null
@@ -134,7 +137,10 @@ export type Database = {
           external_uid: string
           id?: string
           kind?: string
+          moneebee_code?: string | null
           proof_path?: string | null
+          receipt_type?: string | null
+          reference?: string | null
           review_note?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
@@ -150,7 +156,10 @@ export type Database = {
           external_uid?: string
           id?: string
           kind?: string
+          moneebee_code?: string | null
           proof_path?: string | null
+          receipt_type?: string | null
+          reference?: string | null
           review_note?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
@@ -238,6 +247,8 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      gen_moneebee_code: { Args: never; Returns: string }
+      gen_payment_reference: { Args: never; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
