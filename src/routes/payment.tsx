@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { ArrowLeft, Wallet, Copy, Check, ShieldCheck, Loader2, Upload } from "lucide-react";
+import { ArrowLeft, Wallet, Copy, Check, ShieldCheck, Loader2, Upload, FileText, X } from "lucide-react";
 import { currentIdentity, loadSettings } from "@/lib/app-sync";
 import { submitPayment } from "@/lib/public.functions";
 
