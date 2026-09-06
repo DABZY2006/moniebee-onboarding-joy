@@ -16,8 +16,10 @@ import { Route as SignupRouteImport } from './routes/signup'
 import { Route as QrRewardsRouteImport } from './routes/qr-rewards'
 import { Route as PersonalizeRouteImport } from './routes/personalize'
 import { Route as PaymentSuccessRouteImport } from './routes/payment-success'
+import { Route as PaymentReviewRouteImport } from './routes/payment-review'
 import { Route as PaymentRouteImport } from './routes/payment'
 import { Route as NotificationsRouteImport } from './routes/notifications'
+import { Route as MoneebeeCodeRouteImport } from './routes/moneebee-code'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LoadingRouteImport } from './routes/loading'
 import { Route as InvestRouteImport } from './routes/invest'
@@ -65,6 +67,11 @@ const PaymentSuccessRoute = PaymentSuccessRouteImport.update({
   path: '/payment-success',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PaymentReviewRoute = PaymentReviewRouteImport.update({
+  id: '/payment-review',
+  path: '/payment-review',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PaymentRoute = PaymentRouteImport.update({
   id: '/payment',
   path: '/payment',
@@ -73,6 +80,11 @@ const PaymentRoute = PaymentRouteImport.update({
 const NotificationsRoute = NotificationsRouteImport.update({
   id: '/notifications',
   path: '/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MoneebeeCodeRoute = MoneebeeCodeRouteImport.update({
+  id: '/moneebee-code',
+  path: '/moneebee-code',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -141,8 +153,10 @@ export interface FileRoutesByFullPath {
   '/invest': typeof InvestRoute
   '/loading': typeof LoadingRoute
   '/login': typeof LoginRoute
+  '/moneebee-code': typeof MoneebeeCodeRoute
   '/notifications': typeof NotificationsRoute
   '/payment': typeof PaymentRoute
+  '/payment-review': typeof PaymentReviewRoute
   '/payment-success': typeof PaymentSuccessRoute
   '/personalize': typeof PersonalizeRoute
   '/qr-rewards': typeof QrRewardsRoute
@@ -163,8 +177,10 @@ export interface FileRoutesByTo {
   '/invest': typeof InvestRoute
   '/loading': typeof LoadingRoute
   '/login': typeof LoginRoute
+  '/moneebee-code': typeof MoneebeeCodeRoute
   '/notifications': typeof NotificationsRoute
   '/payment': typeof PaymentRoute
+  '/payment-review': typeof PaymentReviewRoute
   '/payment-success': typeof PaymentSuccessRoute
   '/personalize': typeof PersonalizeRoute
   '/qr-rewards': typeof QrRewardsRoute
@@ -186,8 +202,10 @@ export interface FileRoutesById {
   '/invest': typeof InvestRoute
   '/loading': typeof LoadingRoute
   '/login': typeof LoginRoute
+  '/moneebee-code': typeof MoneebeeCodeRoute
   '/notifications': typeof NotificationsRoute
   '/payment': typeof PaymentRoute
+  '/payment-review': typeof PaymentReviewRoute
   '/payment-success': typeof PaymentSuccessRoute
   '/personalize': typeof PersonalizeRoute
   '/qr-rewards': typeof QrRewardsRoute
@@ -210,8 +228,10 @@ export interface FileRouteTypes {
     | '/invest'
     | '/loading'
     | '/login'
+    | '/moneebee-code'
     | '/notifications'
     | '/payment'
+    | '/payment-review'
     | '/payment-success'
     | '/personalize'
     | '/qr-rewards'
@@ -232,8 +252,10 @@ export interface FileRouteTypes {
     | '/invest'
     | '/loading'
     | '/login'
+    | '/moneebee-code'
     | '/notifications'
     | '/payment'
+    | '/payment-review'
     | '/payment-success'
     | '/personalize'
     | '/qr-rewards'
@@ -254,8 +276,10 @@ export interface FileRouteTypes {
     | '/invest'
     | '/loading'
     | '/login'
+    | '/moneebee-code'
     | '/notifications'
     | '/payment'
+    | '/payment-review'
     | '/payment-success'
     | '/personalize'
     | '/qr-rewards'
@@ -277,8 +301,10 @@ export interface RootRouteChildren {
   InvestRoute: typeof InvestRoute
   LoadingRoute: typeof LoadingRoute
   LoginRoute: typeof LoginRoute
+  MoneebeeCodeRoute: typeof MoneebeeCodeRoute
   NotificationsRoute: typeof NotificationsRoute
   PaymentRoute: typeof PaymentRoute
+  PaymentReviewRoute: typeof PaymentReviewRoute
   PaymentSuccessRoute: typeof PaymentSuccessRoute
   PersonalizeRoute: typeof PersonalizeRoute
   QrRewardsRoute: typeof QrRewardsRoute
@@ -341,6 +367,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PaymentSuccessRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/payment-review': {
+      id: '/payment-review'
+      path: '/payment-review'
+      fullPath: '/payment-review'
+      preLoaderRoute: typeof PaymentReviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/payment': {
       id: '/payment'
       path: '/payment'
@@ -353,6 +386,13 @@ declare module '@tanstack/react-router' {
       path: '/notifications'
       fullPath: '/notifications'
       preLoaderRoute: typeof NotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/moneebee-code': {
+      id: '/moneebee-code'
+      path: '/moneebee-code'
+      fullPath: '/moneebee-code'
+      preLoaderRoute: typeof MoneebeeCodeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -445,8 +485,10 @@ const rootRouteChildren: RootRouteChildren = {
   InvestRoute: InvestRoute,
   LoadingRoute: LoadingRoute,
   LoginRoute: LoginRoute,
+  MoneebeeCodeRoute: MoneebeeCodeRoute,
   NotificationsRoute: NotificationsRoute,
   PaymentRoute: PaymentRoute,
+  PaymentReviewRoute: PaymentReviewRoute,
   PaymentSuccessRoute: PaymentSuccessRoute,
   PersonalizeRoute: PersonalizeRoute,
   QrRewardsRoute: QrRewardsRoute,

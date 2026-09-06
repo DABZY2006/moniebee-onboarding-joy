@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { ArrowLeft, Wallet, Copy, Check, ShieldCheck, Loader2, Upload } from "lucide-react";
+import { ArrowLeft, Wallet, Copy, Check, ShieldCheck, Loader2, Upload, FileText, X } from "lucide-react";
 import { currentIdentity, loadSettings } from "@/lib/app-sync";
 import { submitPayment } from "@/lib/public.functions";
 
@@ -33,7 +33,17 @@ function PaymentPage() {
   const [ACCOUNT, setAccount] = useState(DEFAULT_ACCOUNT);
   const [settingsAmount, setSettingsAmount] = useState<number | null>(null);
   const [proof, setProof] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [dragging, setDragging] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  const pickFile = (file: File | null) => {
+    setPreviewUrl((old) => {
+      if (old) URL.revokeObjectURL(old);
+      return file && file.type.startsWith("image/") ? URL.createObjectURL(file) : null;
+    });
+    setProof(file);
+  };
 
   let upgrade: { name?: string; price?: number } = {};
   try {
@@ -80,19 +90,27 @@ function PaymentPage() {
 
   const handlePaid = async () => {
     if (!proof) {
-      toast.error("Upload your payment screenshot first");
+      toast.error("Upload your payment receipt first");
       return;
     }
     if (proof.size > 5 * 1024 * 1024) {
-      toast.error("Screenshot too large (max 5MB)");
+      toast.error("Receipt too large (max 5MB)");
+      return;
+    }
+    const ct = (proof.type === "image/jpg" ? "image/jpeg" : proof.type) as
+      | "image/png"
+      | "image/jpeg"
+      | "image/webp"
+      | "application/pdf";
+    if (!["image/png", "image/jpeg", "image/webp", "application/pdf"].includes(ct)) {
+      toast.error("Use a PNG, JPG, JPEG or PDF receipt");
       return;
     }
     setVerifying(true);
     try {
       const me = currentIdentity();
       const base64 = await readBase64(proof);
-      const ct = proof.type === "image/jpg" ? "image/jpeg" : proof.type;
-      await submitPayment({
+      const { reference } = await submitPayment({
         data: {
           external_uid: me.uid,
           user_name: me.name,
@@ -100,17 +118,21 @@ function PaymentPage() {
           amount: amountDue > 0 ? amountDue : 1,
           currency: "NGN",
           file_name: proof.name,
-          content_type: ct as "image/png" | "image/jpeg" | "image/webp",
+          content_type: ct,
           file_base64: base64,
         },
       });
+      try {
+        localStorage.setItem("moniebee_payment_ref", reference);
+      } catch {}
       setVerifying(false);
-      navigate({ to: "/generating", search: { next: "/payment-success", ms: 10000 } as any });
+      navigate({ to: "/payment-review", search: { ref: reference } });
     } catch (e) {
       setVerifying(false);
       toast.error(e instanceof Error ? e.message : "Could not submit payment");
     }
   };
+
 
   const handleContinue = () => {
     toast.success("Welcome to MONEEBEE 🎉", {
@@ -239,30 +261,79 @@ function PaymentPage() {
           </div>
         </div>
 
-        {/* Proof upload */}
+        {/* Receipt upload */}
         <div className="glass rounded-2xl p-4 mb-5">
-          <div className="text-[11px] font-semibold text-purple-300 tracking-wider mb-2">
-            UPLOAD PAYMENT PROOF
+          <div className="text-[11px] font-semibold text-purple-300 tracking-wider mb-3">
+            UPLOAD PAYMENT RECEIPT
           </div>
           <input
             ref={fileRef}
             type="file"
-            accept="image/png,image/jpeg,image/webp"
+            accept="image/png,image/jpeg,image/jpg,image/webp,application/pdf"
             className="hidden"
-            onChange={(e) => setProof(e.target.files?.[0] ?? null)}
+            onChange={(e) => pickFile(e.target.files?.[0] ?? null)}
           />
-          <button
-            onClick={() => fileRef.current?.click()}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-purple-500/15 border border-purple-400/40 text-left"
-          >
-            <Upload size={18} className="text-purple-200" />
-            <span className="text-[12.5px] truncate">
-              {proof ? proof.name : "Choose your transfer screenshot"}
-            </span>
-          </button>
-          <p className="text-[11px] text-white/50 mt-2">
-            PNG, JPG or WEBP — up to 5MB. Required for verification.
-          </p>
+
+          {!proof ? (
+            <button
+              onClick={() => fileRef.current?.click()}
+              onDragOver={(e) => {
+                e.preventDefault();
+                setDragging(true);
+              }}
+              onDragLeave={() => setDragging(false)}
+              onDrop={(e) => {
+                e.preventDefault();
+                setDragging(false);
+                pickFile(e.dataTransfer.files?.[0] ?? null);
+              }}
+              className={`w-full rounded-2xl border-2 border-dashed px-4 py-8 text-center transition ${
+                dragging
+                  ? "border-purple-300 bg-purple-500/20"
+                  : "border-purple-400/40 bg-purple-500/10"
+              }`}
+            >
+              <Upload size={26} className="mx-auto text-purple-200 mb-2" />
+              <div className="text-[13.5px] font-semibold">Click to upload receipt</div>
+              <div className="text-[11px] text-white/55 mt-1">or drag and drop it here</div>
+              <div className="text-[10.5px] text-white/40 mt-2">PNG, JPG, JPEG or PDF — up to 5MB</div>
+            </button>
+          ) : (
+            <div className="rounded-2xl bg-purple-500/10 border border-purple-400/40 p-3">
+              <div className="flex items-center gap-3">
+                {previewUrl ? (
+                  <img
+                    src={previewUrl}
+                    alt="Selected payment receipt preview"
+                    className="w-16 h-16 rounded-xl object-cover border border-purple-400/40"
+                  />
+                ) : (
+                  <div className="w-16 h-16 rounded-xl bg-purple-500/20 border border-purple-400/40 flex items-center justify-center">
+                    <FileText size={24} className="text-purple-200" />
+                  </div>
+                )}
+                <div className="min-w-0 flex-1">
+                  <div className="text-[12.5px] font-semibold truncate">{proof.name}</div>
+                  <div className="text-[11px] text-white/50">
+                    {(proof.size / 1024).toFixed(0)} KB · ready to submit
+                  </div>
+                </div>
+                <button
+                  onClick={() => pickFile(null)}
+                  aria-label="Remove receipt"
+                  className="shrink-0 w-9 h-9 rounded-full bg-red-500/20 border border-red-400/40 flex items-center justify-center"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+              <button
+                onClick={() => fileRef.current?.click()}
+                className="mt-3 w-full py-2 rounded-xl text-[12px] font-semibold bg-white/8 border border-white/15"
+              >
+                Replace receipt
+              </button>
+            </div>
+          )}
         </div>
 
         <button
@@ -271,9 +342,12 @@ function PaymentPage() {
           className="glow-btn w-full py-4 rounded-2xl text-[15px] font-bold disabled:opacity-70"
           style={{ background: "linear-gradient(135deg,#8B5CF6,#7C3AED,#4C1D95)" }}
         >
-          I Have Made The Payment
-          <div className="text-[11px] font-normal text-white/80 mt-1">Verify Payment Now</div>
+          Submit Payment
+          <div className="text-[11px] font-normal text-white/80 mt-1">
+            Sent to our team for review
+          </div>
         </button>
+
 
         <div className="mt-5 flex items-center justify-center gap-2 text-[11px] text-white/50">
           <ShieldCheck size={13} className="text-purple-300" />
