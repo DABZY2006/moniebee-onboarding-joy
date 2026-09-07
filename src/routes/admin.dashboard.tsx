@@ -331,6 +331,9 @@ function AdminDashboardPage() {
                     <div className="text-[14px] font-semibold truncate">{p.user_name ?? "Unnamed"}</div>
                     <div className="text-[11px] text-white/55 truncate">{p.user_email ?? "—"}</div>
                     <div className="text-[16px] font-bold mt-1">{naira(Number(p.amount))}</div>
+                    <div className="text-[10px] text-white/45 mt-1 tracking-wider break-all">
+                      Ref: {p.reference ?? p.id}
+                    </div>
                     <div className="text-[10px] text-white/40 mt-1">{when(p.created_at)}</div>
                   </div>
                   <span className="shrink-0 text-[10px] px-2 py-1 rounded-full bg-white/10 border border-white/15">{p.status}</span>
