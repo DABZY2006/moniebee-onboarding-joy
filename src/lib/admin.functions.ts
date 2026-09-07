@@ -154,7 +154,7 @@ export const listPayments = createServerFn({ method: "POST" })
     await assertAdmin(context.supabase, context.userId);
     let q = context.supabase
       .from("payments")
-      .select("id, external_uid, user_name, user_email, amount, currency, kind, proof_path, status, review_note, reviewed_at, created_at")
+      .select("id, external_uid, user_name, user_email, amount, currency, kind, proof_path, receipt_type, reference, status, review_note, reviewed_at, created_at")
       .order("created_at", { ascending: false })
       .limit(300);
     if (data.status !== "all") q = q.eq("status", data.status);

@@ -17,6 +17,7 @@ import { Route as QrRewardsRouteImport } from './routes/qr-rewards'
 import { Route as PersonalizeRouteImport } from './routes/personalize'
 import { Route as PaymentSuccessRouteImport } from './routes/payment-success'
 import { Route as PaymentReviewRouteImport } from './routes/payment-review'
+import { Route as PaymentRejectedRouteImport } from './routes/payment-rejected'
 import { Route as PaymentRouteImport } from './routes/payment'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as MoneebeeCodeRouteImport } from './routes/moneebee-code'
@@ -70,6 +71,11 @@ const PaymentSuccessRoute = PaymentSuccessRouteImport.update({
 const PaymentReviewRoute = PaymentReviewRouteImport.update({
   id: '/payment-review',
   path: '/payment-review',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaymentRejectedRoute = PaymentRejectedRouteImport.update({
+  id: '/payment-rejected',
+  path: '/payment-rejected',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PaymentRoute = PaymentRouteImport.update({
@@ -156,6 +162,7 @@ export interface FileRoutesByFullPath {
   '/moneebee-code': typeof MoneebeeCodeRoute
   '/notifications': typeof NotificationsRoute
   '/payment': typeof PaymentRoute
+  '/payment-rejected': typeof PaymentRejectedRoute
   '/payment-review': typeof PaymentReviewRoute
   '/payment-success': typeof PaymentSuccessRoute
   '/personalize': typeof PersonalizeRoute
@@ -180,6 +187,7 @@ export interface FileRoutesByTo {
   '/moneebee-code': typeof MoneebeeCodeRoute
   '/notifications': typeof NotificationsRoute
   '/payment': typeof PaymentRoute
+  '/payment-rejected': typeof PaymentRejectedRoute
   '/payment-review': typeof PaymentReviewRoute
   '/payment-success': typeof PaymentSuccessRoute
   '/personalize': typeof PersonalizeRoute
@@ -205,6 +213,7 @@ export interface FileRoutesById {
   '/moneebee-code': typeof MoneebeeCodeRoute
   '/notifications': typeof NotificationsRoute
   '/payment': typeof PaymentRoute
+  '/payment-rejected': typeof PaymentRejectedRoute
   '/payment-review': typeof PaymentReviewRoute
   '/payment-success': typeof PaymentSuccessRoute
   '/personalize': typeof PersonalizeRoute
@@ -231,6 +240,7 @@ export interface FileRouteTypes {
     | '/moneebee-code'
     | '/notifications'
     | '/payment'
+    | '/payment-rejected'
     | '/payment-review'
     | '/payment-success'
     | '/personalize'
@@ -255,6 +265,7 @@ export interface FileRouteTypes {
     | '/moneebee-code'
     | '/notifications'
     | '/payment'
+    | '/payment-rejected'
     | '/payment-review'
     | '/payment-success'
     | '/personalize'
@@ -279,6 +290,7 @@ export interface FileRouteTypes {
     | '/moneebee-code'
     | '/notifications'
     | '/payment'
+    | '/payment-rejected'
     | '/payment-review'
     | '/payment-success'
     | '/personalize'
@@ -304,6 +316,7 @@ export interface RootRouteChildren {
   MoneebeeCodeRoute: typeof MoneebeeCodeRoute
   NotificationsRoute: typeof NotificationsRoute
   PaymentRoute: typeof PaymentRoute
+  PaymentRejectedRoute: typeof PaymentRejectedRoute
   PaymentReviewRoute: typeof PaymentReviewRoute
   PaymentSuccessRoute: typeof PaymentSuccessRoute
   PersonalizeRoute: typeof PersonalizeRoute
@@ -372,6 +385,13 @@ declare module '@tanstack/react-router' {
       path: '/payment-review'
       fullPath: '/payment-review'
       preLoaderRoute: typeof PaymentReviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payment-rejected': {
+      id: '/payment-rejected'
+      path: '/payment-rejected'
+      fullPath: '/payment-rejected'
+      preLoaderRoute: typeof PaymentRejectedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/payment': {
@@ -488,6 +508,7 @@ const rootRouteChildren: RootRouteChildren = {
   MoneebeeCodeRoute: MoneebeeCodeRoute,
   NotificationsRoute: NotificationsRoute,
   PaymentRoute: PaymentRoute,
+  PaymentRejectedRoute: PaymentRejectedRoute,
   PaymentReviewRoute: PaymentReviewRoute,
   PaymentSuccessRoute: PaymentSuccessRoute,
   PersonalizeRoute: PersonalizeRoute,
