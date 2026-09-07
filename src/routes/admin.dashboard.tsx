@@ -64,7 +64,7 @@ function AdminDashboardPage() {
   const [payments, setPayments] = useState<Payment[]>([]);
   const [paySearch, setPaySearch] = useState("");
   const [payStatus, setPayStatus] = useState<"all" | "pending" | "approved" | "rejected">("all");
-  const [proof, setProof] = useState<string | null>(null);
+  const [proof, setProof] = useState<{ url: string; pdf: boolean } | null>(null);
 
   const [withdrawals, setWithdrawals] = useState<Withdrawal[]>([]);
   const [wdStatus, setWdStatus] = useState<"all" | "pending" | "approved" | "rejected" | "completed">("all");
@@ -344,7 +344,7 @@ function AdminDashboardPage() {
                       onClick={async () => {
                         try {
                           const { url } = await getProofUrl({ data: { path: p.proof_path as string } });
-                          setProof(url);
+                          setProof({ url, pdf: (p.receipt_type ?? "").includes("pdf") || (p.proof_path as string).endsWith(".pdf") });
                         } catch (e) {
                           toast.error((e as Error).message);
                         }
@@ -498,7 +498,16 @@ function AdminDashboardPage() {
           style={{ background: "rgba(0,0,0,.85)" }}
           onClick={() => setProof(null)}
         >
-          <img src={proof} alt="Payment proof screenshot" className="max-h-[80vh] w-auto rounded-2xl border border-purple-400/40" />
+          {proof.pdf ? (
+            <iframe
+              src={proof.url}
+              title="Payment receipt PDF"
+              onClick={(e) => e.stopPropagation()}
+              className="w-full h-[80vh] rounded-2xl border border-purple-400/40 bg-white"
+            />
+          ) : (
+            <img src={proof.url} alt="Payment receipt" className="max-h-[80vh] w-auto rounded-2xl border border-purple-400/40" />
+          )}
         </div>
       )}
     </div>

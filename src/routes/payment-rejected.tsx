@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { ArrowLeft, X, LifeBuoy } from "lucide-react";
-import { currentIdentity, loadPublicSettings } from "@/lib/app-sync";
+import { currentIdentity, loadSettings } from "@/lib/app-sync";
 import { getPaymentStatus } from "@/lib/public.functions";
 
 export const Route = createFileRoute("/payment-rejected")({
@@ -42,10 +42,9 @@ function PaymentRejectedPage() {
     let alive = true;
     (async () => {
       try {
-        const settings = await loadPublicSettings();
-        const links = (settings["links"] ?? {}) as Record<string, string>;
-        if (alive && (links["whatsapp"] || links["telegram"]))
-          setSupport(links["whatsapp"] || links["telegram"]!);
+        const { support: links } = await loadSettings();
+        const url = links?.whatsapp || links?.telegram;
+        if (alive && url) setSupport(url);
       } catch {}
       if (!reference) return;
       try {
