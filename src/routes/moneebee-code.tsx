@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { ArrowLeft, Copy, Check, ShieldCheck, Loader2 } from "lucide-react";
 import { currentIdentity } from "@/lib/app-sync";
 import { getPaymentStatus } from "@/lib/public.functions";
+import { RequireAuth } from "@/components/RequireAuth";
 
 export const Route = createFileRoute("/moneebee-code")({
   validateSearch: z.object({ ref: z.string().optional() }),
@@ -24,7 +25,11 @@ export const Route = createFileRoute("/moneebee-code")({
       { name: "twitter:card", content: "summary" },
     ],
   }),
-  component: MoneebeeCodePage,
+  component: () => (
+    <RequireAuth>
+      <MoneebeeCodePage />
+    </RequireAuth>
+  ),
 });
 
 function MoneebeeCodePage() {

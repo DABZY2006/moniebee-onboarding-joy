@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { ArrowLeft, Wallet, Copy, Check, ShieldCheck, Loader2, Upload, FileText, X } from "lucide-react";
 import { currentIdentity, loadSettings } from "@/lib/app-sync";
 import { submitPayment } from "@/lib/public.functions";
+import { RequireAuth } from "@/components/RequireAuth";
 
 export const Route = createFileRoute("/payment")({
   head: () => ({
@@ -16,7 +17,11 @@ export const Route = createFileRoute("/payment")({
       { name: "twitter:card", content: "summary" },
     ],
   }),
-  component: PaymentPage,
+  component: () => (
+    <RequireAuth>
+      <PaymentPage />
+    </RequireAuth>
+  ),
 });
 
 const DEFAULT_ACCOUNT = {

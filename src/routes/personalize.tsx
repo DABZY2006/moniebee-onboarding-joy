@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 import { currentIdentity } from "@/lib/app-sync";
 import { registerAppUser } from "@/lib/public.functions";
+import { RequireAuth } from "@/components/RequireAuth";
 
 export const Route = createFileRoute("/personalize")({
   head: () => ({
@@ -10,7 +11,11 @@ export const Route = createFileRoute("/personalize")({
       { name: "description", content: "Set your username and referral code on Moniebee." },
     ],
   }),
-  component: PersonalizePage,
+  component: () => (
+    <RequireAuth>
+      <PersonalizePage />
+    </RequireAuth>
+  ),
 });
 
 function PersonalizePage() {

@@ -4,6 +4,7 @@ import { z } from "zod";
 import { Hourglass, ArrowLeft, FileCheck2, RefreshCw, Check } from "lucide-react";
 import { currentIdentity } from "@/lib/app-sync";
 import { getPaymentStatus } from "@/lib/public.functions";
+import { RequireAuth } from "@/components/RequireAuth";
 
 export const Route = createFileRoute("/payment-review")({
   validateSearch: z.object({ ref: z.string().optional() }),
@@ -23,7 +24,11 @@ export const Route = createFileRoute("/payment-review")({
       { name: "twitter:card", content: "summary" },
     ],
   }),
-  component: PaymentReviewPage,
+  component: () => (
+    <RequireAuth>
+      <PaymentReviewPage />
+    </RequireAuth>
+  ),
 });
 
 type Status = Awaited<ReturnType<typeof getPaymentStatus>>;

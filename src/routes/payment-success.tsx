@@ -2,10 +2,15 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Copy, Check, ShieldCheck, Sparkles } from "lucide-react";
+import { RequireAuth } from "@/components/RequireAuth";
 
 export const Route = createFileRoute("/payment-success")({
   head: () => ({ meta: [{ title: "Payment Successful — Moniebee" }] }),
-  component: PaymentSuccessPage,
+  component: () => (
+    <RequireAuth>
+      <PaymentSuccessPage />
+    </RequireAuth>
+  ),
 });
 
 function generateMbeeCode(): string {

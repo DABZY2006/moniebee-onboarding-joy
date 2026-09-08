@@ -4,10 +4,15 @@ import { toast } from "sonner";
 import { ArrowLeft, History, Eye, EyeOff, TrendingUp, Zap, Star, Crown, Gem, Check, X, Loader2, ShieldCheck } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { addTransaction, debitWallet, getBalance, subscribeBalance, setActiveUser, formatNaira } from "@/lib/transactions";
+import { RequireAuth } from "@/components/RequireAuth";
 
 export const Route = createFileRoute("/invest")({
   head: () => ({ meta: [{ title: "Investment — Moniebee" }] }),
-  component: InvestPage,
+  component: () => (
+    <RequireAuth>
+      <InvestPage />
+    </RequireAuth>
+  ),
 });
 
 type Plan = {

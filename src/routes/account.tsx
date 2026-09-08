@@ -9,10 +9,15 @@ import {
 import { useAuth } from "@/hooks/use-auth";
 import { auth, signOut } from "@/lib/firebase";
 import { getBalance, subscribeBalance, setActiveUser, formatNaira } from "@/lib/transactions";
+import { RequireAuth } from "@/components/RequireAuth";
 
 export const Route = createFileRoute("/account")({
   head: () => ({ meta: [{ title: "Account — Moniebee" }] }),
-  component: AccountPage,
+  component: () => (
+    <RequireAuth>
+      <AccountPage />
+    </RequireAuth>
+  ),
 });
 
 function AccountPage() {

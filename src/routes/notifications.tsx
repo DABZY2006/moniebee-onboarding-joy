@@ -2,12 +2,17 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ArrowLeft, ArrowUpRight, ArrowDownLeft, Sparkles, CheckCheck } from "lucide-react";
 import { getTransactions, markAllRead, getReadAt, type Tx } from "@/lib/transactions";
+import { RequireAuth } from "@/components/RequireAuth";
 
 export const Route = createFileRoute("/notifications")({
   head: () => ({
     meta: [{ title: "Notifications — Moniebee" }],
   }),
-  component: NotificationsPage,
+  component: () => (
+    <RequireAuth>
+      <NotificationsPage />
+    </RequireAuth>
+  ),
 });
 
 function timeAgo(ts: number) {

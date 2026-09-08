@@ -2,10 +2,15 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowLeft, Check, Crown, Shield, Sparkles, Zap, Star } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
+import { RequireAuth } from "@/components/RequireAuth";
 
 export const Route = createFileRoute("/upgrade")({
   head: () => ({ meta: [{ title: "Upgrade Account — Moniebee" }] }),
-  component: UpgradePage,
+  component: () => (
+    <RequireAuth>
+      <UpgradePage />
+    </RequireAuth>
+  ),
 });
 
 type Plan = { id: string; name: string; price: number; icon: any; benefits: string[]; accent: string };

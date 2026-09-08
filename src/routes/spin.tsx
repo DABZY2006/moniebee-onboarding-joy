@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, History, Eye, EyeOff, Wallet, Copy, Share2, UserPlus } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import {
+import { RequireAuth } from "@/components/RequireAuth";
   getBalance,
   subscribeBalance,
   creditWallet,
@@ -11,7 +12,11 @@ import {
 
 export const Route = createFileRoute("/spin")({
   head: () => ({ meta: [{ title: "Spin & Earn — Moniebee" }] }),
-  component: SpinPage,
+  component: () => (
+    <RequireAuth>
+      <SpinPage />
+    </RequireAuth>
+  ),
 });
 
 const REWARDS = [100000, 50000, 250000, 130000, 180000, 200000, "JACKPOT", "10000"] as const;

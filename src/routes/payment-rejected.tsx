@@ -4,6 +4,7 @@ import { z } from "zod";
 import { ArrowLeft, X, LifeBuoy } from "lucide-react";
 import { currentIdentity, loadSettings } from "@/lib/app-sync";
 import { getPaymentStatus } from "@/lib/public.functions";
+import { RequireAuth } from "@/components/RequireAuth";
 
 export const Route = createFileRoute("/payment-rejected")({
   validateSearch: z.object({ ref: z.string().optional() }),
@@ -20,7 +21,11 @@ export const Route = createFileRoute("/payment-rejected")({
       { name: "twitter:card", content: "summary" },
     ],
   }),
-  component: PaymentRejectedPage,
+  component: () => (
+    <RequireAuth>
+      <PaymentRejectedPage />
+    </RequireAuth>
+  ),
 });
 
 function PaymentRejectedPage() {

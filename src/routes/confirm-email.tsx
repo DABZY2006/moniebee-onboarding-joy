@@ -2,10 +2,15 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowLeft, Mail, Check, Shield } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
+import { RequireAuth } from "@/components/RequireAuth";
 
 export const Route = createFileRoute("/confirm-email")({
   head: () => ({ meta: [{ title: "Confirm Email — Moniebee" }] }),
-  component: ConfirmEmailPage,
+  component: () => (
+    <RequireAuth>
+      <ConfirmEmailPage />
+    </RequireAuth>
+  ),
 });
 
 function ConfirmEmailPage() {
