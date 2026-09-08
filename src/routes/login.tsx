@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Eye, EyeOff, Mail, Lock, Loader2, CheckCircle2, XCircle } from "lucide-react";
-import { signInWithGoogle } from "@/lib/firebase";
+import { signInWithGoogle, signInWithEmail } from "@/lib/firebase";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
@@ -53,19 +53,28 @@ function LoginPage() {
       return;
     }
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 1400));
-    // demo credential check — any valid email + 6+ char password succeeds
     try {
-      if (remember) {
-        localStorage.setItem(
-          "moniebee_session",
-          JSON.stringify({ email, at: Date.now() }),
-        );
-      }
-    } catch {}
-    setLoading(false);
-    setSuccess(true);
-    setTimeout(() => navigate({ to: "/dashboard" }), 900);
+      const u = await signInWithEmail(email.trim(), password);
+      try {
+        if (u.displayName) localStorage.setItem("moniebee_username", u.displayName);
+        localStorage.setItem("moniebee_remember", remember ? "1" : "0");
+      } catch {}
+      setSuccess(true);
+      setTimeout(() => navigate({ to: "/dashboard", replace: true }), 700);
+    } catch (err: unknown) {
+      const code = (err as { code?: string })?.code ?? "";
+      const msg =
+        code.includes("invalid-credential") || code.includes("wrong-password") || code.includes("user-not-found")
+          ? "Incorrect email or password."
+          : code.includes("too-many-requests")
+            ? "Too many attempts. Please try again shortly."
+            : err instanceof Error
+              ? err.message
+              : "Sign in failed.";
+      setError(msg);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -268,7 +277,7 @@ function LoginPage() {
                   if (u?.displayName) localStorage.setItem("moniebee_username", u.displayName);
                 } catch {}
                 setSuccess(true);
-                setTimeout(() => navigate({ to: "/loading" }), 600);
+                setTimeout(() => navigate({ to: "/loading", replace: true }), 600);
               } catch (err: unknown) {
                 const msg = err instanceof Error ? err.message : "Google sign-in failed.";
                 setError(msg);
