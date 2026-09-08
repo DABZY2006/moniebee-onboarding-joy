@@ -7,12 +7,17 @@ import {
   Home as HomeIcon, PieChart, LineChart as LineIcon, Shield,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
-import { auth, signOut } from "@/lib/firebase";
+import { signOutAndClear } from "@/lib/firebase";
 import { getBalance, subscribeBalance, setActiveUser, formatNaira } from "@/lib/transactions";
+import { RequireAuth } from "@/components/RequireAuth";
 
 export const Route = createFileRoute("/account")({
   head: () => ({ meta: [{ title: "Account — Moniebee" }] }),
-  component: AccountPage,
+  component: () => (
+    <RequireAuth>
+      <AccountPage />
+    </RequireAuth>
+  ),
 });
 
 function AccountPage() {
@@ -72,9 +77,10 @@ function AccountPage() {
   };
 
   const doLogout = async () => {
-    try { await signOut(auth); } catch {}
     setLogoutOpen(false);
-    navigate({ to: "/login" });
+    await signOutAndClear();
+    setActiveUser(null);
+    navigate({ to: "/login", replace: true });
   };
 
   const displayName = user?.displayName ?? "MONEEBEE User";

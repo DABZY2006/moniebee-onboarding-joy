@@ -25,6 +25,7 @@ import {
   reviewWithdrawal,
   getAdminSettings,
   saveAdminSetting,
+  amIAdmin,
 } from "@/lib/admin.functions";
 
 export const Route = createFileRoute("/admin/dashboard")({
@@ -74,13 +75,27 @@ function AdminDashboardPage() {
   const [community, setCommunity] = useState({ telegram_group: "", whatsapp_group: "" });
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data, error }) => {
+    void (async () => {
+      const { data, error } = await supabase.auth.getSession();
       if (error || !data.session) {
-        navigate({ to: "/admin/login" });
+        navigate({ to: "/admin/login", replace: true });
+        return;
+      }
+      // Admin permission is verified on the server, never trusted client-side.
+      try {
+        const { admin } = await amIAdmin();
+        if (!admin) {
+          toast.error("This account does not have admin access.");
+          await supabase.auth.signOut();
+          navigate({ to: "/admin/login", replace: true });
+          return;
+        }
+      } catch {
+        navigate({ to: "/admin/login", replace: true });
         return;
       }
       setEmail(data.session.user.email ?? null);
-    });
+    })();
   }, [navigate]);
 
   const refresh = useCallback(async () => {
@@ -116,7 +131,7 @@ function AdminDashboardPage() {
 
   const doLogout = async () => {
     await supabase.auth.signOut();
-    navigate({ to: "/admin/login" });
+    navigate({ to: "/admin/login", replace: true });
   };
 
   const filteredPayments = useMemo(() => {

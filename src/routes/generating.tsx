@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo } from "react";
+import { RequireAuth } from "@/components/RequireAuth";
 
 export const Route = createFileRoute("/generating")({
   head: () => ({ meta: [{ title: "Please wait — Moniebee" }] }),
@@ -12,7 +13,11 @@ export const Route = createFileRoute("/generating")({
           ? s.ms
           : 5000,
   }),
-  component: GeneratingPage,
+  component: () => (
+    <RequireAuth>
+      <GeneratingPage />
+    </RequireAuth>
+  ),
 });
 
 function GeneratingPage() {

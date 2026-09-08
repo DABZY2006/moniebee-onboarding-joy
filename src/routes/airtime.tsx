@@ -10,13 +10,18 @@ import {
   MONEE_CODE,
   type Tx,
 } from "@/lib/transactions";
+import { RequireAuth } from "@/components/RequireAuth";
 
 
 export const Route = createFileRoute("/airtime")({
   head: () => ({
     meta: [{ title: "Buy Airtime — Moniebee" }],
   }),
-  component: AirtimePage,
+  component: () => (
+    <RequireAuth>
+      <AirtimePage />
+    </RequireAuth>
+  ),
 });
 
 const NETWORKS = [

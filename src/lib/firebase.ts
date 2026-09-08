@@ -5,6 +5,9 @@ import {
   signInWithPopup,
   onAuthStateChanged,
   signOut,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile,
   type User,
 } from "firebase/auth";
 import { getFirestore, doc, setDoc, serverTimestamp } from "firebase/firestore";
@@ -63,3 +66,48 @@ export async function signInWithGoogle() {
 
 export { onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup };
 export type { User };
+
+// ---------------------------------------------------------------------------
+// Email + password authentication (real Firebase Auth, no simulation)
+// ---------------------------------------------------------------------------
+async function upsertUserDoc(user: User) {
+  const { uid, displayName, email, photoURL } = user;
+  await setDoc(
+    doc(db, "users", uid),
+    { uid, displayName, email, photoURL, lastSignInAt: serverTimestamp(), createdAt: serverTimestamp() },
+    { merge: true },
+  );
+}
+
+export async function signUpWithEmail(email: string, password: string, displayName?: string) {
+  const cred = await createUserWithEmailAndPassword(auth, email, password);
+  if (displayName) {
+    try { await updateProfile(cred.user, { displayName }); } catch {}
+  }
+  await upsertUserDoc(cred.user);
+  return cred.user;
+}
+
+export async function signInWithEmail(email: string, password: string) {
+  const cred = await signInWithEmailAndPassword(auth, email, password);
+  await upsertUserDoc(cred.user);
+  return cred.user;
+}
+
+/** Real logout: ends the Firebase session and clears cached app/user state. */
+export async function signOutAndClear() {
+  try { await signOut(auth); } catch {}
+  try {
+    const keep = /^moniebee_(balance|transactions|wallet_initialized|tx_read_at|avatar):/;
+    const drop: string[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (!k) continue;
+      if (k.startsWith("moniebee_") && !keep.test(k)) drop.push(k);
+    }
+    drop.forEach((k) => localStorage.removeItem(k));
+    sessionStorage.clear();
+  } catch {}
+}
+
+export { updateProfile };

@@ -1,11 +1,16 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo } from "react";
+import { RequireAuth } from "@/components/RequireAuth";
 
 export const Route = createFileRoute("/loading")({
   head: () => ({
     meta: [{ title: "Processing — Moniebee" }],
   }),
-  component: LoadingPage,
+  component: () => (
+    <RequireAuth>
+      <LoadingPage />
+    </RequireAuth>
+  ),
 });
 
 function LoadingPage() {

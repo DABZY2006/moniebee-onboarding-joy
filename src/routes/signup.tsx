@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
-import { useEffect, useState } from "react";
-import { signInWithGoogle, auth, onAuthStateChanged } from "@/lib/firebase";
+import { useEffect, useRef, useState } from "react";
+import { signInWithGoogle, signUpWithEmail, auth, onAuthStateChanged } from "@/lib/firebase";
 
 export const Route = createFileRoute("/signup")({
   head: () => ({
@@ -17,12 +17,15 @@ export const Route = createFileRoute("/signup")({
 
 function SignupPage() {
   const navigate = useNavigate();
+  const busyRef = useRef(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => {
-      if (u) {
+      if (u && !busyRef.current) {
         if (u.displayName) {
           try { localStorage.setItem("moniebee_username", u.displayName); } catch {}
         }
@@ -31,6 +34,38 @@ function SignupPage() {
     });
     return () => unsub();
   }, [navigate]);
+
+  const handleEmailSignup = async () => {
+    setError(null);
+    const mail = email.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)) {
+      setError("Enter a valid email address.");
+      return;
+    }
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters.");
+      return;
+    }
+    setBusy(true);
+    busyRef.current = true;
+    try {
+      await signUpWithEmail(mail, password);
+      try { localStorage.setItem("moniebee_email", mail); } catch {}
+      navigate({ to: "/personalize" });
+    } catch (err: unknown) {
+      const code = (err as { code?: string })?.code ?? "";
+      setError(
+        code.includes("email-already-in-use")
+          ? "That email already has an account. Please log in instead."
+          : code.includes("weak-password")
+            ? "Please choose a stronger password."
+            : err instanceof Error
+              ? err.message
+              : "Could not create your account.",
+      );
+      setBusy(false);
+    }
+  };
 
   const handleGoogle = async () => {
     setError(null);
@@ -112,19 +147,49 @@ function SignupPage() {
             <input
               id="email"
               type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              autoComplete="email"
               placeholder="Email Address"
+              className="w-full bg-transparent outline-none px-5 py-4 text-[15px] text-white placeholder:text-white/40"
+            />
+          </div>
+
+          <label
+            htmlFor="password"
+            className="block text-[13px] font-medium text-white/70 mb-2.5 mt-5"
+          >
+            Create Password
+          </label>
+          <div
+            className="rounded-2xl border border-white/10"
+            style={{
+              background: "rgba(46, 16, 87, 0.45)",
+              backdropFilter: "blur(20px) saturate(140%)",
+              boxShadow: "inset 0 1px 0 rgba(255,255,255,0.06), 0 8px 24px rgba(0,0,0,0.25)",
+            }}
+          >
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete="new-password"
+              placeholder="At least 6 characters"
               className="w-full bg-transparent outline-none px-5 py-4 text-[15px] text-white placeholder:text-white/40"
             />
           </div>
         </div>
 
         {/* Continue button */}
-        <Link
-          to="/personalize"
-          className="mt-8 w-full py-4 rounded-[30px] bg-white text-black text-[16px] font-bold text-center shadow-[0_10px_30px_rgba(255,255,255,0.12)] transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0"
+        <button
+          type="button"
+          onClick={handleEmailSignup}
+          disabled={busy}
+          className="mt-8 w-full py-4 rounded-[30px] bg-white text-black text-[16px] font-bold text-center shadow-[0_10px_30px_rgba(255,255,255,0.12)] transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-60"
         >
-          Continue
-        </Link>
+          {busy ? "Creating account..." : "Continue"}
+        </button>
 
         {/* OR divider */}
         <div className="flex items-center gap-4 my-7">

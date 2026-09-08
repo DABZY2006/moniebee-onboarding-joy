@@ -2,10 +2,15 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { ArrowLeft, History, QrCode, Gift, Wallet, ScanLine, ShieldCheck, X } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
+import { RequireAuth } from "@/components/RequireAuth";
 
 export const Route = createFileRoute("/qr-rewards")({
   head: () => ({ meta: [{ title: "QR Rewards — Moniebee" }] }),
-  component: QRRewardsPage,
+  component: () => (
+    <RequireAuth>
+      <QRRewardsPage />
+    </RequireAuth>
+  ),
 });
 
 function QRRewardsPage() {

@@ -39,12 +39,17 @@ import {
 import { MoneeAssistant } from "@/components/MoneeAssistant";
 import { currentIdentity } from "@/lib/app-sync";
 import { getAccountStatus } from "@/lib/public.functions";
+import { RequireAuth } from "@/components/RequireAuth";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
     meta: [{ title: "Dashboard — Moniebee" }],
   }),
-  component: Dashboard,
+  component: () => (
+    <RequireAuth>
+      <Dashboard />
+    </RequireAuth>
+  ),
 });
 
 function Dashboard() {
