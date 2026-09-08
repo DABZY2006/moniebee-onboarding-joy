@@ -24,12 +24,8 @@ function LoginPage() {
   const [success, setSuccess] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
 
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem("moniebee_session");
-      if (saved) navigate({ to: "/dashboard" });
-    } catch {}
-  }, [navigate]);
+  // No auto-login: a previous device session must never bypass authentication.
+
 
   const particles = useMemo(
     () =>
