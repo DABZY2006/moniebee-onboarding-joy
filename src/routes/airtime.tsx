@@ -2,7 +2,6 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, Phone, CheckCircle2, KeyRound } from "lucide-react";
 import {
-import { RequireAuth } from "@/components/RequireAuth";
   getBalance,
   debitWallet,
   subscribeBalance,
@@ -11,6 +10,7 @@ import { RequireAuth } from "@/components/RequireAuth";
   MONEE_CODE,
   type Tx,
 } from "@/lib/transactions";
+import { RequireAuth } from "@/components/RequireAuth";
 
 
 export const Route = createFileRoute("/airtime")({
