@@ -197,3 +197,97 @@ export const submitWithdrawal = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { id: row.id };
   });
+
+/* ───────────── Separate UPGRADE payment flow ───────────── */
+
+/** Stores an upgrade payment submission plus its receipt as "pending" review. */
+export const submitUpgradePayment = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        external_uid: z.string().trim().min(1).max(128),
+        user_name: z.string().trim().max(120).optional(),
+        user_email: z.string().trim().email().max(255),
+        plan_id: z.string().trim().max(60).optional(),
+        plan_name: z.string().trim().min(1).max(120),
+        amount: z.number().positive().max(100000000),
+        currency: z.string().trim().max(8).default("NGN"),
+        file_name: z.string().trim().max(200).optional(),
+        content_type: z.enum(RECEIPT_TYPES),
+        file_base64: z.string().min(1).max(9_000_000),
+      })
+      .parse(input),
+  )
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const bytes = Uint8Array.from(atob(data.file_base64), (c) => c.charCodeAt(0));
+    if (bytes.byteLength > 5 * 1024 * 1024) throw new Error("File too large (max 5MB)");
+    const ext =
+      data.content_type === "application/pdf"
+        ? "pdf"
+        : data.content_type.split("/")[1]!.replace("jpeg", "jpg");
+    const proofPath = `${data.external_uid}/upgrade/${crypto.randomUUID()}.${ext}`;
+    const { error: upErr } = await supabaseAdmin.storage
+      .from("payment-proofs")
+      .upload(proofPath, bytes, { contentType: data.content_type, upsert: false });
+    if (upErr) throw new Error(upErr.message);
+
+    const { data: row, error } = await supabaseAdmin
+      .from("upgrade_payments")
+      .insert({
+        external_uid: data.external_uid,
+        user_name: data.user_name ?? null,
+        user_email: data.user_email,
+        plan_id: data.plan_id ?? null,
+        plan_name: data.plan_name,
+        amount: data.amount,
+        currency: data.currency,
+        proof_path: proofPath,
+        receipt_type: data.content_type,
+        status: "pending",
+      })
+      .select("id, reference")
+      .single();
+    if (error) throw new Error(error.message);
+    return { id: row.id, reference: row.reference as string };
+  });
+
+/**
+ * Read-only status of an upgrade payment. A user can only look up their own
+ * submission (uid + reference must match) and can never change the status.
+ */
+export const getUpgradePaymentStatus = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        external_uid: z.string().trim().min(1).max(128),
+        reference: z.string().trim().min(3).max(60),
+      })
+      .parse(input),
+  )
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: row } = await supabaseAdmin
+      .from("upgrade_payments")
+      .select(
+        "reference, plan_name, amount, currency, status, review_note, proof_path, user_email, created_at, reviewed_at",
+      )
+      .eq("external_uid", data.external_uid)
+      .eq("reference", data.reference)
+      .maybeSingle();
+    if (!row) return { found: false as const };
+    return {
+      found: true as const,
+      reference: row.reference as string,
+      plan_name: row.plan_name as string,
+      amount: Number(row.amount),
+      currency: row.currency as string,
+      status: row.status as string,
+      review_note: row.review_note as string | null,
+      user_email: row.user_email as string | null,
+      receipt_attached: Boolean(row.proof_path),
+      created_at: row.created_at as string,
+      reviewed_at: row.reviewed_at as string | null,
+    };
+  });

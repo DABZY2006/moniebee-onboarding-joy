@@ -8,6 +8,16 @@ export type BankSettings = {
   amount?: number;
 };
 export type LinkSettings = { telegram?: string; whatsapp?: string; telegram_group?: string; whatsapp_group?: string };
+export type UpgradeSettings = {
+  plan_name?: string;
+  amount?: number;
+  starter_amount?: number;
+  silver_amount?: number;
+  gold_amount?: number;
+  bank_name?: string;
+  account_number?: string;
+  account_name?: string;
+};
 
 /** Best-effort identity for the current app user (Firebase + local profile). */
 export function currentIdentity() {
@@ -35,9 +45,14 @@ export function currentIdentity() {
   return { uid, name: name || "Unnamed", email: email || undefined, phone, referral };
 }
 
-/** Loads public settings (bank, support, community) from the backend. */
+/** Loads public settings (bank, support, community, upgrade) from the backend. */
 export async function loadSettings() {
-  const out: { bank?: BankSettings; support?: LinkSettings; community?: LinkSettings } = {};
+  const out: {
+    bank?: BankSettings;
+    support?: LinkSettings;
+    community?: LinkSettings;
+    upgrade?: UpgradeSettings;
+  } = {};
   try {
     const { settings } = await getPublicSettings();
     for (const row of settings) {
@@ -45,7 +60,25 @@ export async function loadSettings() {
       if (row.key === "bank") out.bank = value as BankSettings;
       if (row.key === "support") out.support = value as LinkSettings;
       if (row.key === "community") out.community = value as LinkSettings;
+      if (row.key === "upgrade") out.upgrade = value as UpgradeSettings;
     }
   } catch {}
   return out;
+}
+
+/** Price for an upgrade plan, taken from the admin-configured settings. */
+export function upgradePlanPrice(
+  upgrade: UpgradeSettings | undefined,
+  planId: string,
+  fallback: number,
+) {
+  if (!upgrade) return fallback;
+  const map: Record<string, number | undefined> = {
+    starter: upgrade.starter_amount,
+    silver: upgrade.silver_amount,
+    gold: upgrade.gold_amount,
+    premium: upgrade.amount,
+  };
+  const v = map[planId];
+  return typeof v === "number" && v > 0 ? v : fallback;
 }

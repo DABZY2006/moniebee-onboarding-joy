@@ -300,7 +300,7 @@ export const saveAdminSetting = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) =>
     z
       .object({
-        key: z.enum(["bank", "payment", "support", "community"]),
+        key: z.enum(["bank", "payment", "support", "community", "upgrade"]),
         value: z.string().max(4000),
       })
       .parse(input),
@@ -346,4 +346,73 @@ export const amIAdmin = createServerFn({ method: "POST" })
       _role: "admin",
     });
     return { admin: data === true };
+  });
+
+/* ───────────── Upgrade payment approvals ───────────── */
+
+export const listUpgradePayments = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z
+      .object({ status: z.enum(["all", "pending", "approved", "rejected"]).default("all") })
+      .parse(input ?? {}),
+  )
+  .handler(async ({ data, context }) => {
+    const { assertAdmin } = await import("@/lib/admin.server");
+    await assertAdmin(context.supabase, context.userId);
+    let q = context.supabase
+      .from("upgrade_payments")
+      .select(
+        "id, external_uid, user_name, user_email, plan_id, plan_name, amount, currency, proof_path, receipt_type, reference, status, review_note, reviewed_at, created_at",
+      )
+      .order("created_at", { ascending: false })
+      .limit(300);
+    if (data.status !== "all") q = q.eq("status", data.status);
+    const { data: rows, error } = await q;
+    if (error) throw new Error(error.message);
+    return { upgrades: rows ?? [] };
+  });
+
+export const reviewUpgradePayment = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        id: z.string().uuid(),
+        status: z.enum(["pending", "approved", "rejected"]),
+        note: z.string().trim().max(300).optional(),
+      })
+      .parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { assertAdmin, writeAudit } = await import("@/lib/admin.server");
+    await assertAdmin(context.supabase, context.userId);
+    const { data: row, error } = await context.supabase
+      .from("upgrade_payments")
+      .update({
+        status: data.status,
+        review_note: data.note ?? null,
+        reviewed_by: context.userId,
+        reviewed_at: new Date().toISOString(),
+      })
+      .eq("id", data.id)
+      .select("external_uid")
+      .single();
+    if (error) throw new Error(error.message);
+    if (data.status === "approved" && row?.external_uid) {
+      await context.supabase
+        .from("app_users")
+        .update({ upgraded: true })
+        .eq("external_uid", row.external_uid);
+    }
+    await writeAudit(
+      context.supabase,
+      context.userId,
+      `upgrade_payment_${data.status}`,
+      "upgrade_payments",
+      data.id,
+      null,
+      { note: data.note ?? null },
+    );
+    return { ok: true };
   });
