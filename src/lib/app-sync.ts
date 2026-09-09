@@ -8,6 +8,16 @@ export type BankSettings = {
   amount?: number;
 };
 export type LinkSettings = { telegram?: string; whatsapp?: string; telegram_group?: string; whatsapp_group?: string };
+export type UpgradeSettings = {
+  plan_name?: string;
+  amount?: number;
+  starter_amount?: number;
+  silver_amount?: number;
+  gold_amount?: number;
+  bank_name?: string;
+  account_number?: string;
+  account_name?: string;
+};
 
 /** Best-effort identity for the current app user (Firebase + local profile). */
 export function currentIdentity() {

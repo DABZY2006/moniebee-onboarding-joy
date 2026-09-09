@@ -300,7 +300,7 @@ export const saveAdminSetting = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) =>
     z
       .object({
-        key: z.enum(["bank", "payment", "support", "community"]),
+        key: z.enum(["bank", "payment", "support", "community", "upgrade"]),
         value: z.string().max(4000),
       })
       .parse(input),
