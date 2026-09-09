@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import {
   Bell, Camera, ShieldCheck, User as UserIcon, Lock, Ticket, BadgeCheck, Building2,
   Receipt, Users, BellRing, Headphones, LogOut, ChevronRight, Copy, Check,
-  Home as HomeIcon, PieChart, LineChart as LineIcon, Shield,
+  Home as HomeIcon, PieChart, LineChart as LineIcon,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { signOutAndClear } from "@/lib/firebase";
