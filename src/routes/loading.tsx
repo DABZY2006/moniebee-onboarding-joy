@@ -135,7 +135,7 @@ function LoadingPage() {
 
       {/* Text */}
       <div className="mt-16 text-center relative z-10">
-        <h2 className="text-white text-[24px] font-bold tracking-tight">Processing purchase....</h2>
+        <h2 className="text-white text-[24px] font-bold tracking-tight">Processing Details</h2>
         <p className="mt-2 text-[14px] text-white/50">
           Please wait while we create your account
         </p>
