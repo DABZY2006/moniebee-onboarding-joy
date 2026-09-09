@@ -170,6 +170,66 @@ export type Database = {
         }
         Relationships: []
       }
+      upgrade_payments: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string
+          external_uid: string
+          id: string
+          plan_id: string | null
+          plan_name: string
+          proof_path: string | null
+          receipt_type: string | null
+          reference: string
+          review_note: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          updated_at: string
+          user_email: string | null
+          user_name: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          currency?: string
+          external_uid: string
+          id?: string
+          plan_id?: string | null
+          plan_name: string
+          proof_path?: string | null
+          receipt_type?: string | null
+          reference?: string
+          review_note?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          user_email?: string | null
+          user_name?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          external_uid?: string
+          id?: string
+          plan_id?: string | null
+          plan_name?: string
+          proof_path?: string | null
+          receipt_type?: string | null
+          reference?: string
+          review_note?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          user_email?: string | null
+          user_name?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
