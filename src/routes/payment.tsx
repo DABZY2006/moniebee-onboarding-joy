@@ -83,7 +83,7 @@ function PaymentPage() {
     } catch {}
   };
 
-  const amountDue = upgrade?.price ?? settingsAmount ?? 0;
+  const amountDue = settingsAmount ?? upgrade?.price ?? 0;
 
   const readBase64 = (file: File) =>
     new Promise<string>((resolve, reject) => {
