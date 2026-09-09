@@ -212,7 +212,7 @@ function PaymentPage() {
           </p>
           {amountDue > 0 ? (
             <div className="mt-3 inline-block px-3 py-1.5 rounded-full bg-purple-500/20 border border-purple-400/30 text-[13px] font-semibold text-purple-200">
-              {upgrade?.name ? `${upgrade.name}: ` : "Amount: "}₦{amountDue.toLocaleString("en-NG")}
+              Payment Amount: ₦{amountDue.toLocaleString("en-NG")}
             </div>
           ) : null}
         </div>
