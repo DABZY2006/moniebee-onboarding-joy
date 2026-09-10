@@ -10,6 +10,8 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WithdrawRouteImport } from './routes/withdraw'
+import { Route as UpgradeReviewRouteImport } from './routes/upgrade-review'
+import { Route as UpgradePaymentRouteImport } from './routes/upgrade-payment'
 import { Route as UpgradeRouteImport } from './routes/upgrade'
 import { Route as SpinRouteImport } from './routes/spin'
 import { Route as SignupRouteImport } from './routes/signup'
@@ -36,6 +38,16 @@ import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
 const WithdrawRoute = WithdrawRouteImport.update({
   id: '/withdraw',
   path: '/withdraw',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UpgradeReviewRoute = UpgradeReviewRouteImport.update({
+  id: '/upgrade-review',
+  path: '/upgrade-review',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UpgradePaymentRoute = UpgradePaymentRouteImport.update({
+  id: '/upgrade-payment',
+  path: '/upgrade-payment',
   getParentRoute: () => rootRouteImport,
 } as any)
 const UpgradeRoute = UpgradeRouteImport.update({
@@ -170,6 +182,8 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/spin': typeof SpinRoute
   '/upgrade': typeof UpgradeRoute
+  '/upgrade-payment': typeof UpgradePaymentRoute
+  '/upgrade-review': typeof UpgradeReviewRoute
   '/withdraw': typeof WithdrawRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/login': typeof AdminLoginRoute
@@ -195,6 +209,8 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/spin': typeof SpinRoute
   '/upgrade': typeof UpgradeRoute
+  '/upgrade-payment': typeof UpgradePaymentRoute
+  '/upgrade-review': typeof UpgradeReviewRoute
   '/withdraw': typeof WithdrawRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/login': typeof AdminLoginRoute
@@ -221,6 +237,8 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/spin': typeof SpinRoute
   '/upgrade': typeof UpgradeRoute
+  '/upgrade-payment': typeof UpgradePaymentRoute
+  '/upgrade-review': typeof UpgradeReviewRoute
   '/withdraw': typeof WithdrawRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/login': typeof AdminLoginRoute
@@ -248,6 +266,8 @@ export interface FileRouteTypes {
     | '/signup'
     | '/spin'
     | '/upgrade'
+    | '/upgrade-payment'
+    | '/upgrade-review'
     | '/withdraw'
     | '/admin/dashboard'
     | '/admin/login'
@@ -273,6 +293,8 @@ export interface FileRouteTypes {
     | '/signup'
     | '/spin'
     | '/upgrade'
+    | '/upgrade-payment'
+    | '/upgrade-review'
     | '/withdraw'
     | '/admin/dashboard'
     | '/admin/login'
@@ -298,6 +320,8 @@ export interface FileRouteTypes {
     | '/signup'
     | '/spin'
     | '/upgrade'
+    | '/upgrade-payment'
+    | '/upgrade-review'
     | '/withdraw'
     | '/admin/dashboard'
     | '/admin/login'
@@ -324,6 +348,8 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   SpinRoute: typeof SpinRoute
   UpgradeRoute: typeof UpgradeRoute
+  UpgradePaymentRoute: typeof UpgradePaymentRoute
+  UpgradeReviewRoute: typeof UpgradeReviewRoute
   WithdrawRoute: typeof WithdrawRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
   AdminLoginRoute: typeof AdminLoginRoute
@@ -336,6 +362,20 @@ declare module '@tanstack/react-router' {
       path: '/withdraw'
       fullPath: '/withdraw'
       preLoaderRoute: typeof WithdrawRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/upgrade-review': {
+      id: '/upgrade-review'
+      path: '/upgrade-review'
+      fullPath: '/upgrade-review'
+      preLoaderRoute: typeof UpgradeReviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/upgrade-payment': {
+      id: '/upgrade-payment'
+      path: '/upgrade-payment'
+      fullPath: '/upgrade-payment'
+      preLoaderRoute: typeof UpgradePaymentRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/upgrade': {
@@ -516,6 +556,8 @@ const rootRouteChildren: RootRouteChildren = {
   SignupRoute: SignupRoute,
   SpinRoute: SpinRoute,
   UpgradeRoute: UpgradeRoute,
+  UpgradePaymentRoute: UpgradePaymentRoute,
+  UpgradeReviewRoute: UpgradeReviewRoute,
   WithdrawRoute: WithdrawRoute,
   AdminDashboardRoute: AdminDashboardRoute,
   AdminLoginRoute: AdminLoginRoute,
